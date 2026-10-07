@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>EMS · Quản Lý Bảo Trì Thiết Bị – Trường Dược</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚕️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ───────── TOKENS ───────── */
+:root{
+  /* ── Dược học: xanh lá + trắng tinh (theme sáng - mặc định) ── */
+  --bg:#f0f4f8;--bg2:#e8f0e9;--surf:#ffffff;--surf2:#f4f8f5;--surf3:#e8f2ea;
+  --bord:#c8dfc9;--bord2:#aed0b0;
+  --txt:#1a2e1b;--txt2:#4a7055;--txt3:#8aaa8c;
+  --blue:#1a7a3c;--blue2:#2ea84e;
+  --green:#16a34a;--green2:#22c55e;
+  --yellow:#d97706;--orange:#ea580c;--red:#dc2626;--red2:#f87171;
+  --cyan:#0891b2;--teal:#0d9488;--purple:#7c3aed;--indigo:#2563eb;
+  --topbar:rgba(255,255,255,.88);
+  --r:12px;--rsm:8px;
+  --shd:0 8px 32px rgba(22,80,40,.12);
+}
+html[data-theme="dark"]{
+  /* ── Theme tối: cùng tông xanh lá/teal, nền tối ── */
+  --bg:#0c1310;--bg2:#0e1613;--surf:#141d18;--surf2:#19241d;--surf3:#202e26;
+  --bord:#263a2d;--bord2:#33513c;
+  --txt:#e7f3ea;--txt2:#9dc4a7;--txt3:#6d8f76;
+  --blue:#34d399;--blue2:#4ade80;
+  --green:#22c55e;--green2:#4ade80;
+  --yellow:#f59e0b;--orange:#fb923c;--red:#f87171;--red2:#fca5a5;
+  --cyan:#22d3ee;--teal:#2dd4bf;--purple:#a78bfa;--indigo:#60a5fa;
+  --topbar:rgba(20,29,24,.88);
+  --shd:0 8px 32px rgba(0,0,0,.45);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--txt);height:100vh;overflow:hidden;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--bord2);border-radius:9px;}
+
+/* ─── LOGIN ─── */
+#loginScreen{
+  position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;
+  background:var(--bg);overflow:hidden;
+}
+.lbg-grid{position:absolute;inset:0;
+  background-image:linear-gradient(var(--bord) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--bord) 1px,transparent 1px);
+  background-size:52px 52px;opacity:.04;pointer-events:none;
+}
+.lbg-glow{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 55% 45% at 60% 40%,rgba(26,122,60,.08) 0%,transparent 70%),
+             radial-gradient(ellipse 40% 50% at 20% 70%,rgba(13,148,136,.06) 0%,transparent 60%);
+}
+.login-card{
+  position:relative;z-index:1;display:flex;border-radius:20px;overflow:hidden;
+  box-shadow:var(--shd),0 0 0 1px var(--bord2);width:840px;max-width:95vw;
+  animation:cardIn .65s cubic-bezier(.16,1,.3,1);
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(.97);}to{opacity:1;transform:none;}}
+
+/* login left */
+.ll{
+  flex:1;padding:48px 42px;display:flex;flex-direction:column;justify-content:center;
+  background:linear-gradient(145deg,rgba(26,122,60,.10) 0%,rgba(13,148,136,.06) 100%);
+  border-right:1px solid var(--bord2);min-width:0;
+}
+.ll-logo{display:inline-flex;align-items:center;gap:9px;
+  background:rgba(26,122,60,.12);border:1px solid rgba(26,122,60,.28);
+  border-radius:99px;padding:5px 14px 5px 9px;margin-bottom:26px;width:fit-content;
+}
+.ll-logo-ic{width:28px;height:28px;background:linear-gradient(135deg,var(--green),var(--teal));
+  border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.ll-logo span{font-size:11.5px;font-weight:800;color:var(--blue2);letter-spacing:.4px;}
+.ll h1{font-size:26px;font-weight:900;line-height:1.22;margin-bottom:10px;}
+.ll h1 em{font-style:normal;color:var(--blue2);}
+.ll p{font-size:13px;color:var(--txt2);line-height:1.75;margin-bottom:30px;max-width:340px;}
+.feat{display:flex;flex-direction:column;gap:9px;}
+.feat-row{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--txt2);}
+.feat-ic{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+
+/* login right */
+.lr{width:390px;flex-shrink:0;background:var(--surf);padding:44px 38px;}
+.lr-title{font-size:19px;font-weight:900;margin-bottom:3px;}
+.lr-sub{font-size:12px;color:var(--txt2);margin-bottom:26px;line-height:1.55;}
+
+/* ── CCCD FIELD ── */
+.cccd-field{
+  position:relative;margin-bottom:18px;
+  background:var(--surf2);border:1.5px solid var(--bord2);border-radius:var(--r);
+  padding:0;overflow:hidden;transition:border-color .2s,box-shadow .2s;cursor:text;
+}
+.cccd-field:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,122,60,.15);}
+.cccd-field-top{
+  display:flex;align-items:center;gap:10px;padding:13px 14px 13px 14px;
+}
+.cccd-field-ic{font-size:18px;flex-shrink:0;}
+.cccd-field-txt{flex:1;min-width:0;}
+.cccd-field-lbl{font-size:9.5px;font-weight:800;color:var(--blue2);letter-spacing:.8px;text-transform:uppercase;margin-bottom:3px;}
+.cccd-input{
+  display:block;width:100%;background:transparent;border:none;outline:none;
+  font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;
+  color:var(--txt);letter-spacing:1.5px;height:24px;
+  /* Che ký tự như password nhưng vẫn bắt được event đúng */
+  -webkit-text-security:disc;
+  text-security:disc;
+}
+.cccd-input::placeholder{font-family:'Be Vietnam Pro',sans-serif;font-size:12.5px;font-weight:400;letter-spacing:0;color:var(--txt3);}
+/* char grid */
+.cccd-grid{
+  display:flex;gap:3px;padding:0 14px 12px;align-items:center;
+}
+.cg-sep{width:6px;height:1px;background:var(--bord2);flex-shrink:0;margin:0 1px;}
+.cccd-grid .cg{
+  width:20px;height:22px;border-radius:5px;background:var(--surf);
+  border:1px solid var(--bord);display:flex;align-items:center;justify-content:center;
+  font-size:8px;color:var(--txt3);font-family:'JetBrains Mono',monospace;
+  transition:all .12s;flex-shrink:0;
+}
+.cccd-grid .cg.filled{background:rgba(26,122,60,.1);border-color:rgba(26,122,60,.4);color:var(--blue2);}
+.cccd-grid .cg.active{border-color:var(--blue);background:rgba(26,122,60,.16);color:var(--blue2);animation:cgPulse .5s ease;}
+@keyframes cgPulse{0%{transform:scale(1.15);}100%{transform:scale(1);}}
+/* hint row */
+.cccd-hint{
+  padding:0 14px 12px;
+  font-size:10.5px;color:var(--txt3);
+}
+.cccd-hint span.ok{color:var(--green2);}
+.cccd-hint span.warn{color:var(--yellow);}
+
+.login-err{
+  background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:var(--rsm);
+  padding:10px 13px;font-size:12.5px;color:var(--red2);margin-bottom:14px;display:none;
+}
+.login-err.on{display:block;}
+.lbtn{
+  width:100%;padding:13px;border:none;border-radius:var(--rsm);
+  background:linear-gradient(135deg,var(--blue),var(--teal));color:#fff;
+  font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;
+  transition:all .2s;box-shadow:0 4px 22px rgba(26,122,60,.3);letter-spacing:.3px;
+}
+.lbtn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(26,122,60,.4);}
+.lbtn:disabled{opacity:.35;cursor:not-allowed;transform:none!important;box-shadow:none;}
+
+.theme-fab{
+  position:fixed;top:16px;right:16px;z-index:1000;
+  width:36px;height:36px;border-radius:50%;
+  background:var(--surf);border:1px solid var(--bord2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;box-shadow:var(--shd);
+  transition:transform .15s;
+}
+.theme-fab:hover{transform:scale(1.08);}
+
+@media(max-width:760px){
+  .login-card{flex-direction:column;max-width:420px;}
+  .ll{padding:28px 26px;}
+  .lr{width:100%;padding:26px;}
+}
+
+/* ─── SHELL ─── */
+#shell{display:none;height:100vh;}
+#shell.on{display:flex;}
+
+/* Sidebar */
+.sb{
+  width:254px;flex-shrink:0;background:var(--surf);border-right:1px solid var(--bord);
+  display:flex;flex-direction:column;height:100vh;transition:width .26s ease;overflow:hidden;
+}
+.sb.slim{width:62px;}
+.sb-head{
+  padding:16px 12px;border-bottom:1px solid var(--bord);
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.sb-logo{
+  width:34px;height:34px;background:linear-gradient(135deg,var(--green),var(--teal));
+  border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;
+}
+.sb-txt{overflow:hidden;}
+.sb-name{font-size:12px;font-weight:900;white-space:nowrap;}
+.sb-ver{font-size:9.5px;color:var(--txt3);white-space:nowrap;}
+.sb-tog{
+  margin-left:auto;width:24px;height:24px;border-radius:6px;background:var(--surf2);
+  border:1px solid var(--bord);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:var(--txt2);flex-shrink:0;transition:background .15s;
+}
+.sb-tog:hover{background:var(--surf3);}
+nav{flex:1;overflow-y:auto;padding:8px 6px;}
+.sec{margin-bottom:16px;}
+.sec-lbl{
+  font-size:8.5px;font-weight:800;letter-spacing:1.4px;color:var(--txt3);
+  text-transform:uppercase;padding:0 9px 6px;white-space:nowrap;overflow:hidden;
+}
+.ni{
+  display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:var(--rsm);
+  cursor:pointer;transition:all .14s;font-size:12.5px;font-weight:500;color:var(--txt2);
+  margin-bottom:1px;white-space:nowrap;overflow:hidden;position:relative;
+}
+.ni:hover{background:var(--surf2);color:var(--txt);}
+.ni.on{background:rgba(26,122,60,.10);color:var(--blue2);}
+.ni.on::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--blue);border-radius:0 3px 3px 0;}
+.ni .ico{font-size:15px;width:19px;text-align:center;flex-shrink:0;}
+.ni .lbl{flex:1;overflow:hidden;text-overflow:ellipsis;}
+.ni .nb{background:var(--red);color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:99px;flex-shrink:0;animation:blink 1.8s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.4;}}
+.sb-foot{padding:10px;border-top:1px solid var(--bord);flex-shrink:0;}
+.uchip{
+  display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:var(--rsm);
+  background:var(--surf2);cursor:pointer;transition:background .14s;overflow:hidden;
+}
+.uchip:hover{background:var(--surf3);}
+.uav{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
+.utxt{flex:1;min-width:0;}
+.uname{font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ucccd{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--txt3);}
+.urb{font-size:9px;font-weight:800;padding:2px 7px;border-radius:99px;flex-shrink:0;}
+.rba{background:rgba(26,122,60,.16);color:var(--blue);}
+.rbt{background:rgba(13,148,136,.16);color:var(--teal);}
+.rbv{background:rgba(139,92,246,.16);color:var(--purple);}
+.slim .sb-txt,.slim .sec-lbl,.slim .ni .lbl,.slim .ni .nb,.slim .utxt,.slim .urb{display:none;}
+.slim .uchip{justify-content:center;}
+
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{
+  height:52px;background:var(--topbar);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--bord);padding:0 20px;display:flex;align-items:center;
+  gap:10px;flex-shrink:0;z-index:10;
+}
+.tb-title{font-size:14px;font-weight:800;flex:1;}
+.tb-r{display:flex;align-items:center;gap:7px;}
+.content{flex:1;overflow-y:auto;padding:20px;}
+.page{display:none;}
+.page.on{display:block;animation:fadeUp .28s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:none;}}
+
+/* ─── BUTTONS ─── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:var(--rsm);border:none;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;transition:all .14s;}
+.bp{background:var(--blue);color:#fff;}
+.bp:hover{background:var(--blue2);transform:translateY(-1px);}
+.bg{background:var(--surf2);color:var(--txt2);border:1px solid var(--bord);}
+.bg:hover{background:var(--surf3);color:var(--txt);}
+.bd{background:rgba(239,68,68,.1);color:var(--red2);border:1px solid rgba(239,68,68,.2);}
+.bd:hover{background:rgba(239,68,68,.18);}
+.bs{background:rgba(16,185,129,.1);color:var(--green2);border:1px solid rgba(16,185,129,.22);}
+.bs:hover{background:rgba(16,185,129,.18);}
+.bw{background:rgba(245,158,11,.1);color:var(--yellow);border:1px solid rgba(245,158,11,.22);}
+.btn-sm{padding:5px 11px;font-size:11.5px;}
+.btn-xs{padding:3px 8px;font-size:11px;}
+.bic{width:30px;height:30px;padding:0;justify-content:center;background:var(--surf2);border:1px solid var(--bord);color:var(--txt2);border-radius:var(--rsm);}
+.bic:hover{background:var(--surf3);color:var(--txt);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;}
+
+/* ─── CARDS ─── */
+.card{background:var(--surf);border:1px solid var(--bord);border-radius:var(--r);overflow:hidden;}
+.card-hd{padding:12px 16px;border-bottom:1px solid var(--bord);display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.card-title{font-size:13.5px;font-weight:800;flex:1;min-width:80px;}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:16px;}
+.sbox{
+  background:var(--surf);border:1px solid var(--bord);border-radius:var(--r);padding:16px;
+  position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s;cursor:default;
+}
+.sbox:hover{transform:translateY(-2px);box-shadow:var(--shd);}
+.sbox-stripe{position:absolute;top:0;left:0;right:0;height:3px;}
+.sbox-ic{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:10px;}
+.sbox-n{font-size:22px;font-weight:900;font-family:'JetBrains Mono',monospace;line-height:1;}
+.sbox-l{font-size:11.5px;color:var(--txt2);margin-top:4px;font-weight:600;}
+.sbox-s{font-size:10px;color:var(--txt3);margin-top:2px;}
+
+/* ─── TABLE ─── */
+.tscroll{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:580px;}
+th{padding:8px 12px;text-align:left;font-size:9.5px;font-weight:800;letter-spacing:.6px;color:var(--txt3);text-transform:uppercase;border-bottom:1px solid var(--bord);background:var(--surf2);white-space:nowrap;}
+td{padding:11px 12px;font-size:12.5px;border-bottom:1px solid var(--bord);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:var(--surf3);}
+
+/* ─── BADGES ─── */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:99px;font-size:10.5px;font-weight:700;white-space:nowrap;}
+.badge::before{content:'●';font-size:6px;}
+.b-act{background:rgba(22,163,74,.12);color:var(--green);}
+.b-mt{background:rgba(217,119,6,.12);color:var(--yellow);}
+.b-brk{background:rgba(220,38,38,.12);color:var(--red);}
+.b-ret{background:rgba(100,116,139,.15);color:var(--txt2);}
+.b-done{background:rgba(22,163,74,.12);color:var(--green);}
+.b-prc{background:rgba(34,211,238,.12);color:var(--cyan);}
+.b-wait{background:rgba(217,119,6,.12);color:var(--yellow);}
+
+/* location type badges */
+.lb{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;border:1px solid;white-space:nowrap;}
+.lb-bm{background:rgba(37,99,235,.1);color:var(--indigo);border-color:rgba(37,99,235,.25);}
+.lb-pc{background:rgba(20,184,166,.1);color:var(--teal);border-color:rgba(20,184,166,.25);}
+.lb-gd{background:rgba(139,92,246,.1);color:var(--purple);border-color:rgba(139,92,246,.25);}
+.lb-ph{background:rgba(245,158,11,.1);color:var(--yellow);border-color:rgba(245,158,11,.25);}
+
+/* ─── PROGRESS ─── */
+.prog{display:flex;align-items:center;gap:6px;}
+.prog-tr{flex:1;height:5px;background:var(--surf2);border-radius:99px;overflow:hidden;min-width:40px;}
+.prog-fill{height:100%;border-radius:99px;}
+.prog-v{font-size:10.5px;font-weight:700;width:32px;text-align:right;font-family:'JetBrains Mono',monospace;}
+
+/* ─── MODAL ─── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center;padding:16px;}
+.overlay.on{display:flex;}
+.modal{background:var(--surf);border:1px solid var(--bord2);border-radius:16px;width:100%;max-width:570px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 32px 88px rgba(0,0,0,.35);animation:mIn .22s cubic-bezier(.16,1,.3,1);}
+@keyframes mIn{from{opacity:0;transform:scale(.96) translateY(12px);}to{opacity:1;transform:none;}}
+.m-hd{padding:15px 19px;border-bottom:1px solid var(--bord);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.m-hd h3{font-size:14.5px;font-weight:800;flex:1;}
+.m-body{padding:18px;overflow-y:auto;flex:1;}
+.m-ft{padding:12px 18px;border-top:1px solid var(--bord);display:flex;justify-content:flex-end;gap:7px;flex-shrink:0;}
+
+/* ─── FORM ─── */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fi{display:flex;flex-direction:column;gap:4px;}
+.fi.full{grid-column:1/-1;}
+.fi label{font-size:10px;font-weight:800;color:var(--txt2);text-transform:uppercase;letter-spacing:.55px;}
+.fi input,.fi select,.fi textarea{
+  background:var(--surf2);border:1.5px solid var(--bord);color:var(--txt);
+  padding:8px 11px;border-radius:var(--rsm);font-family:inherit;font-size:12.5px;outline:none;transition:all .14s;width:100%;
+}
+.fi input:focus,.fi select:focus,.fi textarea:focus{border-color:var(--blue);background:var(--surf3);}
+.fi select option{background:var(--surf);}
+.fi textarea{resize:vertical;min-height:64px;}
+.fi .hint{font-size:10px;color:var(--txt3);}
+.loc-prev{margin-top:5px;font-size:11px;min-height:18px;}
+
+/* ─── DETAIL PANEL ─── */
+.dpanel{
+  position:fixed;right:0;top:0;bottom:0;width:420px;background:var(--surf);
+  border-left:1px solid var(--bord2);z-index:200;overflow-y:auto;
+  transform:translateX(100%);transition:transform .28s cubic-bezier(.16,1,.3,1),visibility .28s;
+  visibility:hidden;
+}
+.dpanel.on{transform:none;visibility:visible;box-shadow:-14px 0 48px rgba(0,0,0,.25);}
+.dp-hd{padding:16px;border-bottom:1px solid var(--bord);display:flex;align-items:center;gap:10px;position:sticky;top:0;background:var(--surf);z-index:1;}
+.dp-hd h3{font-size:13.5px;font-weight:800;flex:1;}
+.dp-body{padding:16px;}
+.dp-sec{margin-bottom:18px;}
+.dp-sec-title{font-size:9px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--txt3);margin-bottom:8px;}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.di{background:var(--surf2);border-radius:var(--rsm);padding:10px;}
+.di.full{grid-column:1/-1;}
+.di-l{font-size:9px;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
+.di-v{font-size:12.5px;font-weight:700;}
+
+/* ─── CHARTS ─── */
+.ch-row{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:16px;}
+.ch-card{background:var(--surf);border:1px solid var(--bord);border-radius:var(--r);padding:16px;}
+.ch-title{font-size:12.5px;font-weight:800;margin-bottom:12px;}
+.bch{display:flex;flex-direction:column;gap:8px;}
+.bch-row{display:flex;align-items:center;gap:8px;}
+.bch-lbl{font-size:11px;color:var(--txt2);width:155px;text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bch-tr{flex:1;height:5px;background:var(--surf2);border-radius:99px;overflow:hidden;}
+.bch-fill{height:100%;border-radius:99px;transition:width .9s cubic-bezier(.16,1,.3,1);}
+.bch-v{font-size:10.5px;font-weight:700;width:26px;flex-shrink:0;font-family:'JetBrains Mono',monospace;}
+.donut-wrap{display:flex;align-items:center;gap:16px;}
+.legend{display:flex;flex-direction:column;gap:7px;}
+.leg-row{display:flex;align-items:center;gap:6px;font-size:11px;}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.leg-nm{color:var(--txt2);flex:1;}
+.leg-v{font-weight:700;}
+
+/* ─── LOC STATS (dashboard) ─── */
+.loc-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:16px;}
+.lsc{background:var(--surf);border:1px solid var(--bord);border-radius:var(--rsm);padding:13px;display:flex;align-items:center;gap:10px;}
+.lsc-ic{font-size:20px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:9px;flex-shrink:0;}
+.lsc-n{font-size:19px;font-weight:900;font-family:'JetBrains Mono',monospace;}
+.lsc-l{font-size:11px;font-weight:600;color:var(--txt2);}
+.lsc-s{font-size:9.5px;color:var(--txt3);}
+
+/* alert banner */
+.abanner{
+  background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.22);border-radius:var(--rsm);
+  padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--yellow);
+}
+
+/* filter chips */
+.fchips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.fchip{padding:4px 11px;border-radius:99px;font-size:11.5px;font-weight:600;cursor:pointer;border:1.5px solid var(--bord);background:var(--surf2);color:var(--txt2);transition:all .14s;}
+.fchip:hover{border-color:var(--bord2);color:var(--txt);}
+.fchip.on{background:rgba(26,122,60,.12);border-color:rgba(26,122,60,.38);color:var(--blue);}
+
+/* misc */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:52px 20px;gap:8px;color:var(--txt3);text-align:center;}
+.empty-ic{font-size:38px;opacity:.2;margin-bottom:3px;}
+.empty h4{font-size:13px;font-weight:700;color:var(--txt2);}
+.empty p{font-size:11.5px;max-width:250px;line-height:1.6;}
+.spin{width:26px;height:26px;border:3px solid var(--bord);border-top-color:var(--blue);border-radius:50%;animation:sp .6s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+#toasts{position:fixed;top:12px;right:12px;z-index:9999;display:flex;flex-direction:column;gap:5px;}
+.toast{background:var(--surf);border:1px solid var(--bord2);border-radius:var(--rsm);padding:9px 13px;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;min-width:220px;max-width:340px;box-shadow:var(--shd);animation:tIn .2s ease;}
+@keyframes tIn{from{opacity:0;transform:translateX(12px);}to{opacity:1;transform:none;}}
+.t-ok{border-left:3px solid var(--green2);}
+.t-err{border-left:3px solid var(--red2);}
+.t-info{border-left:3px solid var(--blue2);}
+.t-warn{border-left:3px solid var(--yellow);}
+
+@media(max-width:860px){
+  .sb{position:fixed;left:0;top:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform .28s ease,width .28s ease;}
+  .sb.mob-on{transform:none;}
+  .ch-row,.loc-grid4{grid-template-columns:1fr;}
+  .fg{grid-template-columns:1fr;}
+  .fi.full{grid-column:1;}
+  .dpanel{width:100%;}
+  #mbBtn{display:flex!important;}
+}
+
+/* ─── v4 bổ sung ─── */
+.sb-backdrop{display:none;}
+@media(max-width:860px){.sb-backdrop.on{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:90;}}
+.sys-row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--bord);font-size:12.5px;}
+.sys-row:last-child{border-bottom:none;}
+.sys-row span:first-child{color:var(--txt2);}
+.log-row{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--bord);}
+.log-row:last-child{border-bottom:none;}
+.log-dot{width:6px;height:6px;border-radius:50%;background:var(--blue2);margin-top:6px;flex-shrink:0;}
+.mono{font-family:'JetBrains Mono',monospace;}
+.otp-sent{font-size:12.5px;color:var(--txt2);background:var(--surf2);border:1px solid var(--bord);border-radius:var(--rsm);padding:10px 12px;margin-bottom:14px;line-height:1.6;word-break:break-all;}
+.otp-sent b{color:var(--txt);}
+.otp-input{display:block;width:100%;text-align:center;font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:700;letter-spacing:14px;padding:12px 0 12px 14px;background:var(--surf2);border:1.5px solid var(--bord2);border-radius:var(--r);color:var(--txt);outline:none;transition:border-color .2s,box-shadow .2s;}
+.otp-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,122,60,.15);}
+.otp-input::placeholder{color:var(--txt3);letter-spacing:14px;}
+.otp-meta{font-size:11.5px;color:var(--txt2);margin:9px 0 14px;text-align:center;}
+.otp-meta .warn{color:var(--yellow);}
+.otp-links{display:flex;justify-content:space-between;margin-top:14px;}
+.otp-link{background:none;border:none;font-family:inherit;font-size:12px;font-weight:600;color:var(--blue2);cursor:pointer;padding:4px 0;}
+.otp-link:disabled{color:var(--txt3);cursor:default;}
+.otp-help{font-size:10.5px;color:var(--txt3);margin-top:12px;text-align:center;}
+.boot-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:1001;}
+.flt{background:var(--surf2);border:1px solid var(--bord);color:var(--txt);padding:6px 10px;border-radius:var(--rsm);font-family:inherit;font-size:12.5px;outline:none;}
+.flt:focus{border-color:var(--blue);}
+</style>
+</head>
+<body>
+
+<!-- Màn hình chờ khi đang khôi phục phiên -->
+<div class="boot-screen" id="bootScreen"><div class="spin"></div></div>
+
+<!-- ══════════════════ LOGIN ══════════════════ -->
+<div id="loginScreen" style="display:none">
+  <button class="theme-fab theme-icon" onclick="toggleTheme()" title="Đổi giao diện sáng/tối">🌙</button>
+  <div class="lbg-grid"></div>
+  <div class="lbg-glow"></div>
+  <div class="login-card">
+    <div class="ll">
+      <div class="ll-logo">
+        <div class="ll-logo-ic">⚕️</div>
+        <span>TRƯỜNG ĐẠI HỌC DƯỢC</span>
+      </div>
+      <h1>Hệ Thống Quản Lý<br><em>Bảo Trì Thiết Bị</em></h1>
+      <p>Quản lý tập trung toàn bộ thiết bị tại các bộ môn, phòng chức năng, giảng đường và phòng họp của Trường Dược.</p>
+      <div class="feat">
+        <div class="feat-row"><div class="feat-ic" style="background:rgba(37,99,235,.15)">🖥️</div>Theo dõi thiết bị theo địa điểm cụ thể</div>
+        <div class="feat-row"><div class="feat-ic" style="background:rgba(22,163,74,.15)">📊</div>Tính % hao mòn &amp; hiệu quả tự động</div>
+        <div class="feat-row"><div class="feat-ic" style="background:rgba(217,119,6,.15)">🔔</div>Cảnh báo lịch bảo trì định kỳ</div>
+        <div class="feat-row"><div class="feat-ic" style="background:rgba(139,92,246,.15)">🔒</div>Đăng nhập bằng CCCD + mã OTP qua email</div>
+      </div>
+    </div>
+    <div class="lr">
+      <div class="lr-title">Đăng nhập</div>
+      <div class="lr-sub" id="lrSub">Bước 1/2 · Nhập số CCCD.<br>Mã xác thực (OTP) sẽ được gửi tới email của bạn.</div>
+      <div class="login-err" id="lerr"></div>
+      <div id="cccdStep">
+      <div class="cccd-field" onclick="document.getElementById('inCccd').focus()">
+        <div class="cccd-field-top">
+          <span class="cccd-field-ic">🪪</span>
+          <div class="cccd-field-txt">
+            <div class="cccd-field-lbl">Số CCCD / Mật Khẩu</div>
+            <input type="text" id="inCccd" class="cccd-input" maxlength="12" inputmode="numeric" pattern="[0-9]*"
+              placeholder="Nhập số CCCD…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+          </div>
+        </div>
+        <div class="cccd-grid" id="cgrid"></div>
+        <div class="cccd-hint" id="cccdHint">&nbsp;</div>
+      </div>
+      <button class="btn bp lbtn" id="lbtn" onclick="doLogin()" disabled>Gửi mã OTP →</button>
+      </div>
+      <div id="otpStep" style="display:none">
+        <div class="otp-sent">📧 Mã 6 số đã được gửi tới <b id="otpEmail">—</b></div>
+        <input type="text" id="inOtp" class="otp-input" maxlength="6" inputmode="numeric" pattern="[0-9]*"
+          autocomplete="one-time-code" placeholder="••••••" aria-label="Mã OTP">
+        <div class="otp-meta"><span id="otpExpire">&nbsp;</span></div>
+        <button class="btn bp lbtn" id="otpBtn" onclick="doVerifyOtp()" disabled>Xác nhận &amp; Đăng nhập →</button>
+        <div class="otp-links">
+          <button class="otp-link" onclick="backToCccd()">← Dùng CCCD khác</button>
+          <button class="otp-link" id="resendBtn" onclick="resendOtp()" disabled>Gửi lại mã</button>
+        </div>
+        <div class="otp-help">Không thấy email? Kiểm tra thư mục <b>Spam / Quảng cáo</b>.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ SHELL ══════════════════ -->
+<div id="shell">
+  <div class="sb-backdrop" id="sbBackdrop" onclick="toggleMob(false)"></div>
+  <aside class="sb" id="sb">
+    <div class="sb-head">
+      <div class="sb-logo">⚕️</div>
+      <div class="sb-txt">
+        <div class="sb-name">EMS · Trường Dược</div>
+        <div class="sb-ver">Quản Lý Bảo Trì v4.1</div>
+      </div>
+      <div class="sb-tog" onclick="toggleSb()">◀</div>
+    </div>
+    <nav>
+      <div class="sec">
+        <div class="sec-lbl">Tổng Quan</div>
+        <div class="ni" data-page="dashboard"><span class="ico">📊</span><span class="lbl">Dashboard</span></div>
+      </div>
+      <div class="sec">
+        <div class="sec-lbl">Quản Lý</div>
+        <div class="ni" data-page="equipment"><span class="ico">🖥️</span><span class="lbl">Thiết Bị</span></div>
+        <div class="ni" data-page="maintenance"><span class="ico">🔧</span><span class="lbl">Lịch Sử Bảo Trì</span></div>
+        <div class="ni" data-page="schedule"><span class="ico">📅</span><span class="lbl">Lịch Bảo Trì</span><span class="nb" id="sBadge" style="display:none">!</span></div>
+        <div class="ni" data-page="locations"><span class="ico">🏫</span><span class="lbl">Địa Điểm</span></div>
+      </div>
+      <div class="sec" id="adminSec">
+        <div class="sec-lbl">Quản Trị</div>
+        <div class="ni" data-page="users"><span class="ico">👥</span><span class="lbl">Nhân Viên</span></div>
+        <div class="ni" data-page="reports"><span class="ico">📈</span><span class="lbl">Báo Cáo</span></div>
+        <div class="ni" data-page="config"><span class="ico">⚙️</span><span class="lbl">Cài Đặt</span></div>
+      </div>
+      <div class="sec">
+        <div class="sec-lbl">Cá Nhân</div>
+        <div class="ni" data-page="profile"><span class="ico">👤</span><span class="lbl">Hồ Sơ</span></div>
+      </div>
+    </nav>
+    <div class="sb-foot">
+      <div class="uchip" data-page="profile">
+        <div class="uav" id="uAv"></div>
+        <div class="utxt">
+          <div class="uname" id="uName">—</div>
+          <div class="ucccd" id="uCccd">—</div>
+        </div>
+        <span class="urb rba" id="uRb">—</span>
+      </div>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <button class="btn bg bic" id="mbBtn" style="display:none" onclick="toggleMob()">☰</button>
+      <div class="tb-title" id="tbTitle">Dashboard</div>
+      <div class="tb-r" id="tbRight"></div>
+      <button class="btn bg bic theme-icon" onclick="toggleTheme()" title="Đổi giao diện sáng/tối">🌙</button>
+      <button class="btn bg btn-sm" onclick="logout()">🚪 Thoát</button>
+    </header>
+    <div class="content">
+      <div class="page" id="pg-dashboard"></div>
+      <div class="page" id="pg-equipment">
+        <div class="card">
+          <div class="card-hd">
+            <span class="card-title">🖥️ Danh Sách Thiết Bị</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+              <input id="eqQ" class="flt" placeholder="🔍 Tìm..." style="width:160px" oninput="fEq()">
+              <select id="eqSt" class="flt" onchange="fEq()"><option value="">Tất cả TT</option><option>Hoạt động</option><option>Bảo trì</option><option>Hỏng hóc</option><option>Nghỉ hưu</option></select>
+              <select id="eqLt" class="flt" onchange="fEq()" style="max-width:200px"></select>
+              <select id="eqCat" class="flt" onchange="fEq()"></select>
+            </div>
+          </div>
+          <div id="eqTbl" class="tscroll"></div>
+        </div>
+      </div>
+      <div class="page" id="pg-maintenance">
+        <div class="card">
+          <div class="card-hd">
+            <span class="card-title">🔧 Lịch Sử Bảo Trì</span>
+            <select id="mtSt" class="flt" onchange="fMt()"><option value="">Tất cả</option><option>Hoàn thành</option><option>Đang xử lý</option><option>Chờ xử lý</option></select>
+          </div>
+          <div id="mtTbl" class="tscroll"></div>
+        </div>
+      </div>
+      <div class="page" id="pg-schedule">
+        <div class="card">
+          <div class="card-hd"><span class="card-title">📅 Thiết Bị Sắp Đến Hạn Bảo Trì (60 ngày)</span></div>
+          <div id="schedTbl" class="tscroll"></div>
+        </div>
+      </div>
+      <div class="page" id="pg-locations"></div>
+      <div class="page" id="pg-users">
+        <div class="card">
+          <div class="card-hd">
+            <span class="card-title">👥 Nhân Viên</span>
+            <button class="btn bp btn-sm" onclick="openAddUser()">＋ Thêm NV</button>
+          </div>
+          <div id="userTbl" class="tscroll"></div>
+        </div>
+      </div>
+      <div class="page" id="pg-reports"></div>
+      <div class="page" id="pg-config"></div>
+      <div class="page" id="pg-profile"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Panel -->
+<div class="dpanel" id="dpanel">
+  <div class="dp-hd"><h3 id="dpTitle">—</h3><button class="btn bg bic" onclick="closeDP()">✕</button></div>
+  <div class="dp-body" id="dpBody"></div>
+</div>
+
+<!-- Modal -->
+<div class="overlay" id="mOverlay" onclick="ovClick(event)">
+  <div class="modal" id="mBox">
+    <div class="m-hd"><h3 id="mTitle">—</h3><button class="btn bg bic" onclick="closeModal()">✕</button></div>
+    <div class="m-body" id="mBody"></div>
+    <div class="m-ft" id="mFt"></div>
+  </div>
+</div>
+<div id="toasts"></div>
+
+<script>
+'use strict';
+// ══════════════════════════════════════════════════════════
+//  THEME
+// ══════════════════════════════════════════════════════════
+function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } }
+function sess(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) { return null; } }
+
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t === 'dark' ? 'dark' : 'light');
+  document.querySelectorAll('.theme-icon').forEach(el => { el.textContent = t === 'dark' ? '☀️' : '🌙'; });
+}
+function toggleTheme() {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  store('ems_theme', next); applyTheme(next);
+}
+applyTheme(store('ems_theme') || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+
+// ══════════════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+function gv(id) { const el = $(id); return el ? el.value.trim() : ''; }
+function today() { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); }
+function esc(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function fmtD(s) { const m = String(s || '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? `${m[3]}/${m[2]}/${m[1]}` : (s ? esc(s) : '—'); }
+function parseD(s) { const m = String(s || '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; }
+function daysLeft(s) { const d = parseD(s); if (!d) return null; const t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((d - t) / 86400000); }
+function fmtM(v) {
+  const n = parseFloat(v) || 0;
+  if (!n) return '—';
+  if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B ₫';
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M ₫';
+  if (n >= 1e3) return Math.round(n / 1e3) + 'K ₫';
+  return n.toLocaleString('vi') + '₫';
+}
+function pBar(pct, type, full = false) {
+  const p = Math.min(100, Math.max(0, parseFloat(pct) || 0));
+  const col = type === 'w'
+    ? (p <= 25 ? 'var(--green)' : p <= 50 ? 'var(--yellow)' : p <= 75 ? 'var(--orange)' : 'var(--red)')
+    : (p >= 75 ? 'var(--green)' : p >= 50 ? 'var(--yellow)' : p >= 25 ? 'var(--orange)' : 'var(--red)');
+  return `<div class="prog"${full ? ' style="gap:9px"' : ''}>
+    <div class="prog-tr"${full ? ' style="height:6px"' : ''}><div class="prog-fill" style="width:${p}%;background:${col}"></div></div>
+    <div class="prog-v" style="color:${col}">${p}%</div></div>`;
+}
+const EQ_BADGE = { 'Hoạt động': 'b-act', 'Bảo trì': 'b-mt', 'Hỏng hóc': 'b-brk', 'Nghỉ hưu': 'b-ret' };
+const MT_BADGE = { 'Hoàn thành': 'b-done', 'Đang xử lý': 'b-prc', 'Chờ xử lý': 'b-wait' };
+function eqBadge(s) { return `<span class="badge ${EQ_BADGE[s] || 'b-ret'}">${esc(s || '—')}</span>`; }
+function mtBadge(s) { return `<span class="badge ${MT_BADGE[s] || 'b-wait'}">${esc(s || '—')}</span>`; }
+function loading() { return `<div style="display:flex;align-items:center;justify-content:center;padding:60px;gap:12px;flex-direction:column"><div class="spin"></div><span style="font-size:13px;color:var(--txt2)">Đang tải...</span></div>`; }
+function errHtml(msg) { return `<div style="padding:40px;text-align:center;color:var(--red)">❌ ${esc(msg)}</div>`; }
+function emptyHtml(msg) { return `<div class="empty"><div class="empty-ic">📭</div><h4>${esc(msg)}</h4><p>Dữ liệu sẽ hiển thị tại đây sau khi được thêm vào hệ thống</p></div>`; }
+function toast(msg, type = 'info') {
+  const ic = { ok: '✅', err: '❌', info: 'ℹ️', warn: '⚠️' };
+  const t = document.createElement('div');
+  t.className = `toast t-${type}`;
+  t.innerHTML = `<span>${ic[type] || 'ℹ️'}</span><span>${esc(msg)}</span>`;
+  $('toasts').appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+function isAdmin() { return ME && ME.vaiTro === 'admin'; }
+function canEdit() { return ME && ME.vaiTro !== 'viewer'; }
+
+// ══════════════════════════════════════════════════════════
+//  API  —  gọi Cloudflare Function /api (proxy tới Apps Script)
+// ══════════════════════════════════════════════════════════
+const API_URL = '/api';
+let TOKEN = sess('ems_token') || '';
+let ME = null;
+let DB = { eq: [], mt: [], users: [], locs: [], log: [] };
+
+async function api(action, data = {}) {
+  try {
+    const r = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, data, token: TOKEN })
+    });
+    const res = await r.json().catch(() => ({ ok: false, msg: 'Phản hồi không hợp lệ từ server (HTTP ' + r.status + ').' }));
+    if (res && res.code === 'AUTH' && action !== 'login' && ME) { forceLogout(res.msg); }
+    return (res && typeof res === 'object') ? res : { ok: false, msg: 'Phản hồi không hợp lệ.' };
+  } catch (e) {
+    return { ok: false, msg: 'Lỗi kết nối: ' + e.message };
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+//  LOCATIONS
+// ══════════════════════════════════════════════════════════
+const LOCS_META = {
+  bomon: { label: 'Bộ Môn',          icon: '🔬', color: 'var(--indigo)', bc: 'rgba(37,99,235,.08)',  bdr: 'rgba(37,99,235,.25)',  cls: 'lb-bm' },
+  phcn:  { label: 'Phòng Chức Năng', icon: '🏢', color: 'var(--teal)',   bc: 'rgba(13,148,136,.08)', bdr: 'rgba(13,148,136,.25)', cls: 'lb-pc' },
+  gd:    { label: 'Giảng Đường',     icon: '📚', color: 'var(--purple)', bc: 'rgba(139,92,246,.08)', bdr: 'rgba(139,92,246,.25)', cls: 'lb-gd' },
+  ph:    { label: 'Phòng Họp',       icon: '🤝', color: 'var(--yellow)', bc: 'rgba(217,119,6,.08)',  bdr: 'rgba(217,119,6,.25)',  cls: 'lb-ph' },
+};
+let LOCS = buildLocs([]);
+function buildLocs(rows) {
+  const L = {};
+  Object.keys(LOCS_META).forEach(k => { L[k] = { ...LOCS_META[k], items: [] }; });
+  rows.forEach(r => { (L[r.loai] || L.gd).items.push(String(r.ten)); });
+  return L;
+}
+async function reloadLocs() {
+  const res = await api('getLocations');
+  if (res.ok) { DB.locs = res.data; LOCS = buildLocs(res.data); rebuildLocDropdown(); }
+}
+function locType(loc) { for (const [t, g] of Object.entries(LOCS)) if (g.items.includes(loc)) return t; return 'gd'; }
+function locTypeBadge(loc) { const g = LOCS[locType(loc)]; return `<span class="lb ${g.cls}">${g.icon} ${g.label}</span>`; }
+function locBadge(loc) { const g = LOCS[locType(loc)]; return `<span class="lb ${g.cls}">${g.icon} ${esc(loc)}</span>`; }
+function rebuildLocDropdown() {
+  const sel = $('eqLt'); if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Tất cả địa điểm</option>' + Object.values(LOCS).map(g =>
+    `<optgroup label="${g.icon} ${g.label}">${g.items.map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('')}</optgroup>`
+  ).join('');
+  sel.value = cur;
+}
+
+const CATS = ['Điều Hòa', 'Máy In', 'Máy Chiếu', 'Máy Tính / Laptop', 'Màn Hình', 'Thiết Bị Mạng', 'Camera / An Ninh',
+  'Điện - UPS', 'Thiết Bị Thí Nghiệm', 'Thiết Bị Âm Thanh', 'Thiết Bị Phòng Học', 'Khác'];
+
+// ══════════════════════════════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════════════════════════════
+let loginBusy = false, lastAuto = '', prevCccd = null;
+let OTP = { challenge: '', cccd: '', exp: 0, resendAt: 0, timer: null };
+
+(function buildGrid() {
+  let h = '';
+  for (let i = 0; i < 12; i++) { if (i && i % 3 === 0) h += '<div class="cg-sep"></div>'; h += `<div class="cg" id="cg${i}">—</div>`; }
+  $('cgrid').innerHTML = h;
+})();
+
+function syncCccd() {
+  const inp = $('inCccd');
+  const v = inp.value.replace(/\D/g, '').slice(0, 12);
+  if (inp.value !== v) inp.value = v;
+  if (v === prevCccd) return;
+  prevCccd = v;
+  onCccdInput(v);
+}
+['input', 'change', 'paste'].forEach(ev => $('inCccd').addEventListener(ev, () => setTimeout(syncCccd, 0)));
+$('inCccd').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+setInterval(() => { if ($('loginScreen').style.display !== 'none' && $('cccdStep').style.display !== 'none') syncCccd(); }, 300); // bắt autofill
+$('inOtp').addEventListener('input', () => {
+  const inp = $('inOtp'), v = inp.value.replace(/\D/g, '').slice(0, 6);
+  if (inp.value !== v) inp.value = v;
+  $('otpBtn').disabled = v.length !== 6 || loginBusy;
+  if (v.length === 6) doVerifyOtp();
+});
+$('inOtp').addEventListener('keydown', e => { if (e.key === 'Enter') doVerifyOtp(); });
+
+function onCccdInput(v) {
+  const len = v.length;
+  for (let i = 0; i < 12; i++) {
+    const cell = $('cg' + i);
+    cell.className = i < len ? (i === len - 1 ? 'cg active' : 'cg filled') : 'cg';
+    cell.textContent = i < len ? '●' : '—';
+  }
+  const hint = $('cccdHint'), btn = $('lbtn');
+  if (len === 0) { hint.innerHTML = '&nbsp;'; btn.disabled = true; }
+  else if (len < 9) { hint.innerHTML = `<span class="warn">Cần thêm ${9 - len} số (CCCD 9 số) hoặc ${12 - len} số (CCCD 12 số)</span>`; btn.disabled = true; }
+  else if (len === 9) { hint.innerHTML = `<span class="ok">✓ CCCD 9 số hợp lệ — nhấn Đăng nhập</span>`; btn.disabled = false; }
+  else if (len < 12) { hint.innerHTML = `<span class="warn">Cần thêm ${12 - len} số nữa (CCCD 12 số)</span>`; btn.disabled = true; }
+  else {
+    hint.innerHTML = `<span class="ok">✓ CCCD 12 số hợp lệ — đang gửi mã OTP…</span>`; btn.disabled = false;
+    if (v !== lastAuto) { lastAuto = v; setTimeout(doLogin, 300); }
+  }
+}
+
+async function doLogin() {
+  if (loginBusy) return;
+  const cccd = $('inCccd').value.replace(/\D/g, '');
+  const err = $('lerr'), btn = $('lbtn');
+  err.classList.remove('on');
+  if (!/^\d{9}$|^\d{12}$/.test(cccd)) { err.textContent = '⚠️ CCCD phải có 9 hoặc 12 chữ số.'; err.classList.add('on'); return; }
+  loginBusy = true; btn.disabled = true; btn.textContent = 'Đang gửi mã…';
+  const res = await api('login', { cccd });
+  loginBusy = false;
+  btn.disabled = false; btn.textContent = 'Gửi mã OTP →';
+  if (!res.ok) { err.textContent = '❌ ' + (res.msg || 'Đăng nhập thất bại.'); err.classList.add('on'); return; }
+  showOtpStep(cccd, res);
+}
+
+function showOtpStep(cccd, res) {
+  OTP.challenge = res.challenge; OTP.cccd = cccd;
+  OTP.exp = Date.now() + res.ttl * 1000; OTP.resendAt = Date.now() + res.cooldown * 1000;
+  $('otpEmail').textContent = res.email;
+  $('cccdStep').style.display = 'none'; $('otpStep').style.display = '';
+  $('lrSub').innerHTML = 'Bước 2/2 · Nhập mã xác thực.<br>Mã có hiệu lực trong ' + Math.round(res.ttl / 60) + ' phút.';
+  $('lerr').classList.remove('on');
+  const inp = $('inOtp'); inp.value = ''; $('otpBtn').disabled = true; inp.focus();
+  clearInterval(OTP.timer); OTP.timer = setInterval(tickOtp, 1000); tickOtp();
+}
+function tickOtp() {
+  const now = Date.now();
+  const left = Math.max(0, Math.round((OTP.exp - now) / 1000));
+  const rs = Math.max(0, Math.ceil((OTP.resendAt - now) / 1000));
+  $('otpExpire').innerHTML = left
+    ? `Mã hết hạn sau <b class="mono">${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}</b>`
+    : '<span class="warn">Mã đã hết hạn — bấm "Gửi lại mã".</span>';
+  const rb = $('resendBtn'); rb.disabled = rs > 0 || loginBusy; rb.textContent = rs > 0 ? `Gửi lại mã (${rs}s)` : 'Gửi lại mã';
+}
+async function doVerifyOtp() {
+  const code = $('inOtp').value.replace(/\D/g, '');
+  if (loginBusy || code.length !== 6) return;
+  const err = $('lerr'), btn = $('otpBtn');
+  err.classList.remove('on');
+  loginBusy = true; btn.disabled = true; btn.textContent = 'Đang xác thực…';
+  const res = await api('verifyOtp', { challenge: OTP.challenge, otp: code });
+  loginBusy = false; btn.textContent = 'Xác nhận & Đăng nhập →';
+  if (!res.ok) {
+    err.textContent = '❌ ' + (res.msg || 'Mã không đúng.'); err.classList.add('on');
+    $('inOtp').value = ''; $('inOtp').focus(); btn.disabled = true;
+    if (res.expired) { OTP.exp = 0; OTP.resendAt = 0; }
+    tickOtp();
+    return;
+  }
+  clearInterval(OTP.timer);
+  TOKEN = res.token; sess('ems_token', TOKEN);
+  ME = res.user;
+  boot();
+}
+async function resendOtp() {
+  if (loginBusy) return;
+  loginBusy = true; $('resendBtn').disabled = true; $('resendBtn').textContent = 'Đang gửi…';
+  const res = await api('login', { cccd: OTP.cccd });
+  loginBusy = false;
+  if (!res.ok) {
+    $('lerr').textContent = '❌ ' + res.msg; $('lerr').classList.add('on');
+    if (res.wait) OTP.resendAt = Date.now() + res.wait * 1000;
+    tickOtp(); return;
+  }
+  showOtpStep(OTP.cccd, res);
+  toast('Đã gửi mã OTP mới', 'ok');
+}
+function backToCccd() {
+  clearInterval(OTP.timer); OTP.challenge = '';
+  $('otpStep').style.display = 'none'; $('cccdStep').style.display = '';
+  $('lrSub').innerHTML = 'Bước 1/2 · Nhập số CCCD.<br>Mã xác thực (OTP) sẽ được gửi tới email của bạn.';
+  $('lerr').classList.remove('on');
+  const inp = $('inCccd'); inp.value = ''; prevCccd = null; lastAuto = ''; syncCccd(); inp.focus();
+}
+
+function resetLogin() {
+  ME = null; TOKEN = ''; sess('ems_token', null);
+  DB = { eq: [], mt: [], users: [], locs: [], log: [] };
+  closeModal(); closeDP();
+  $('shell').classList.remove('on');
+  $('bootScreen').style.display = 'none';
+  $('loginScreen').style.display = 'flex';
+  backToCccd();
+  $('lbtn').textContent = 'Gửi mã OTP →';
+}
+function logout() { if (TOKEN) api('logout'); resetLogin(); }
+function forceLogout(msg) { resetLogin(); const err = $('lerr'); err.textContent = '⏳ ' + msg; err.classList.add('on'); }
+
+// ══════════════════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════════════════
+const ROLE_LABEL = { admin: 'Admin', technician: 'Kỹ Thuật', viewer: 'Viewer' };
+const ROLE_CLS = { admin: 'rba', technician: 'rbt', viewer: 'rbv' };
+const ROLE_COLOR = { admin: ['rgba(26,122,60,.16)', 'var(--blue)'], technician: ['rgba(13,148,136,.16)', 'var(--teal)'], viewer: ['rgba(139,92,246,.16)', 'var(--purple)'] };
+
+async function boot() {
+  $('loginScreen').style.display = 'none';
+  $('bootScreen').style.display = 'none';
+  $('shell').classList.add('on');
+
+  const [bg, fg] = ROLE_COLOR[ME.vaiTro] || ROLE_COLOR.viewer;
+  const av = $('uAv'); av.textContent = (ME.hoTen || '?')[0]; av.style.background = bg; av.style.color = fg;
+  $('uName').textContent = ME.hoTen;
+  $('uCccd').textContent = maskCccd(ME.cccd);
+  const rb = $('uRb'); rb.textContent = ROLE_LABEL[ME.vaiTro] || 'Viewer'; rb.className = 'urb ' + (ROLE_CLS[ME.vaiTro] || 'rbv');
+  $('adminSec').style.display = isAdmin() ? '' : 'none';
+  $('mbBtn').style.display = window.innerWidth < 860 ? 'flex' : 'none';
+
+  $('pg-dashboard').innerHTML = loading();
+  $('eqCat').innerHTML = '<option value="">Tất cả DM</option>' + CATS.map(c => `<option>${esc(c)}</option>`).join('');
+
+  const [rLocs, rEq, rMt, rUsers] = await Promise.all([
+    api('getLocations'), api('getEquipment'), api('getMaintenance'), api('getUsers')
+  ]);
+  if (!ME) return; // đã bị đăng xuất trong lúc tải
+  if (rLocs.ok) { DB.locs = rLocs.data; LOCS = buildLocs(rLocs.data); }
+  if (rEq.ok) DB.eq = rEq.data; else toast('Lỗi tải thiết bị: ' + rEq.msg, 'err');
+  if (rMt.ok) DB.mt = rMt.data;
+  if (rUsers.ok) DB.users = rUsers.data;
+  rebuildLocDropdown();
+  updateScheduleBadge();
+  go('dashboard');
+}
+function maskCccd(c) { c = String(c || ''); return c.length > 4 ? '•'.repeat(c.length - 4) + c.slice(-4) : c; }
+
+async function reloadEq() { const r = await api('getEquipment'); if (r.ok) DB.eq = r.data; }
+async function reloadMt() { const r = await api('getMaintenance'); if (r.ok) DB.mt = r.data; }
+
+function updateScheduleBadge() {
+  const c = DB.eq.filter(e => { if (e.trangThai === 'Nghỉ hưu') return false; const d = daysLeft(e.ngayBTTiep); return d !== null && d <= 30 && d > -1; }).length;
+  const b = $('sBadge'); b.style.display = c ? '' : 'none'; b.textContent = c;
+}
+
+// ══════════════════════════════════════════════════════════
+//  NAVIGATION & EVENT DELEGATION
+// ══════════════════════════════════════════════════════════
+const TITLES = { dashboard: '📊 Dashboard', equipment: '🖥️ Thiết Bị', maintenance: '🔧 Lịch Sử Bảo Trì',
+  schedule: '📅 Lịch Bảo Trì', locations: '🏫 Địa Điểm – Trường Dược', users: '👥 Nhân Viên',
+  reports: '📈 Báo Cáo', config: '⚙️ Cài Đặt', profile: '👤 Hồ Sơ' };
+const ADMIN_PAGES = ['users', 'reports', 'config'];
+let CUR = '';
+
+function go(p) {
+  if (!ME) return;
+  if (ADMIN_PAGES.includes(p) && !isAdmin()) { toast('Chỉ Admin mới truy cập được trang này', 'err'); return; }
+  document.querySelectorAll('.page').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(x => x.classList.toggle('on', x.dataset.page === p));
+  $('pg-' + p).classList.add('on');
+  $('tbTitle').textContent = TITLES[p] || p;
+  CUR = p;
+  const tr = $('tbRight'); tr.innerHTML = '';
+  if (p === 'equipment' && canEdit()) tr.innerHTML = `<button class="btn bp btn-sm" onclick="openAddEq()">＋ Thiết Bị</button>`;
+  if (p === 'maintenance' && canEdit()) tr.innerHTML = `<button class="btn bp btn-sm" onclick="openAddMt()">＋ Ghi Nhận</button>`;
+  toggleMob(false);
+  ({ dashboard: rDash, equipment: rEq, maintenance: rMt, schedule: rSched, locations: rLocs, users: rUsers,
+     reports: rReports, profile: rProfile, config: rConfig })[p]?.();
+}
+function toggleSb() { $('sb').classList.toggle('slim'); }
+function toggleMob(force) {
+  const on = typeof force === 'boolean' ? force : !$('sb').classList.contains('mob-on');
+  $('sb').classList.toggle('mob-on', on); $('sbBackdrop').classList.toggle('on', on);
+}
+window.addEventListener('resize', () => { if (ME) $('mbBtn').style.display = window.innerWidth < 860 ? 'flex' : 'none'; });
+
+// Nút trong bảng dùng data-act + data-id thay vì onclick nội tuyến → an toàn với ký tự đặc biệt
+const ACTIONS = {
+  openDP: id => openDP(id), editEq: id => openEditEq(id), delEq: id => delEq(id),
+  addMt: id => openAddMt(id), editMt: id => openEditMt(id),
+  editLoc: (id, el) => openEditLoc(id, el.dataset.x), delLoc: id => doDelLoc(id), viewLoc: id => filterByLoc(id),
+  filterLT: id => filterLT(id),
+  editUser: id => openEditUser(id), delUser: id => delUser(id),
+};
+document.addEventListener('click', e => {
+  const nav = e.target.closest('[data-page]');
+  if (nav) { go(nav.dataset.page); return; }
+  const el = e.target.closest('[data-act]');
+  if (el && ACTIONS[el.dataset.act]) ACTIONS[el.dataset.act](el.dataset.id || '', el);
+});
+function actBtn(act, id, label, cls = 'bg bic', title = '', extra = '') {
+  return `<button class="btn ${cls}" data-act="${act}" data-id="${esc(id)}"${extra}${title ? ` title="${esc(title)}"` : ''}>${label}</button>`;
+}
+
+// ══════════════════════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════════════════════
+function sb(l, v, ic, col, bg, sub) {
+  return `<div class="sbox"><div class="sbox-stripe" style="background:${col}"></div><div class="sbox-ic" style="background:${bg}">${ic}</div><div class="sbox-n" style="color:${col}">${esc(v)}</div><div class="sbox-l">${esc(l)}</div><div class="sbox-s">${esc(sub)}</div></div>`;
+}
+async function rDash() {
+  const pg = $('pg-dashboard');
+  pg.innerHTML = loading();
+  const res = await api('getDashboard');
+  if (CUR !== 'dashboard') return;
+  if (!res.ok) { pg.innerHTML = errHtml(res.msg); return; }
+  const { stats, catMap, locMap, upcoming, recentMt } = res;
+  const CC = ['#16a34a', '#2563eb', '#dc2626', '#7c3aed', '#d97706', '#0d9488', '#ea580c', '#0891b2'];
+  const catMax = Math.max(...Object.values(catMap), 1);
+  const WC = ['var(--green)', 'var(--yellow)', 'var(--orange)', 'var(--red)'];
+  const eqs = DB.eq;
+  const wDist = { '≤25%': 0, '26–50%': 0, '51–75%': 0, '>75%': 0 };
+  eqs.forEach(e => { const w = +e.haoMon || 0; if (w <= 25) wDist['≤25%']++; else if (w <= 50) wDist['26–50%']++; else if (w <= 75) wDist['51–75%']++; else wDist['>75%']++; });
+  const wT = eqs.length || 1;
+  let offs = 0; const circ = 251.2;
+  const segs = Object.values(wDist).map((v, i) => { const d = v / wT * circ; const s = `<circle cx="50" cy="50" r="40" fill="none" stroke="${WC[i]}" stroke-width="15" stroke-dasharray="${d} ${circ - d}" stroke-dashoffset="${-offs}" transform="rotate(-90 50 50)" opacity="${v === 0 ? .08 : 1}"/>`; offs += d; return s; }).join('');
+
+  pg.innerHTML = `
+    ${upcoming ? `<div class="abanner">⚠️ <b>${upcoming} thiết bị</b> sắp đến hạn trong 30 ngày <button class="btn bw btn-sm" style="margin-left:auto" data-page="schedule">Xem →</button></div>` : ''}
+    <div class="sgrid">
+      ${sb('Tổng Thiết Bị', stats.total, '🖥️', 'var(--blue)', 'rgba(26,122,60,.12)', `Hoạt động: ${stats.active}`)}
+      ${sb('Hoạt Động', stats.active, '✅', 'var(--green)', 'rgba(22,163,74,.12)', Math.round(stats.active / Math.max(stats.total, 1) * 100) + '% tổng số')}
+      ${sb('Đang Bảo Trì', stats.mt, '🔧', 'var(--yellow)', 'rgba(217,119,6,.12)', 'Tạm ngừng')}
+      ${sb('Hỏng Hóc', stats.broken, '❌', 'var(--red)', 'rgba(220,38,38,.12)', 'Cần xử lý')}
+      ${sb('Nghỉ Hưu', stats.retired, '🗄️', 'var(--txt2)', 'rgba(100,116,139,.12)', 'Đã thanh lý')}
+      ${sb('Chi Phí BT', fmtM(stats.totalCost), '💰', 'var(--yellow)', 'rgba(217,119,6,.12)', 'Toàn bộ lịch sử')}
+      ${sb('Hao Mòn TB', stats.avgWear + '%', '⚠️', 'var(--orange)', 'rgba(234,88,12,.12)', 'TB toàn trường')}
+      ${sb('Hiệu Quả TB', stats.avgEff + '%', '📈', 'var(--green)', 'rgba(22,163,74,.12)', 'TB toàn trường')}
+    </div>
+    <div style="margin-bottom:15px">
+      <div style="font-size:12.5px;font-weight:800;color:var(--txt2);margin-bottom:9px">📍 Thiết Bị Theo Khu Vực</div>
+      <div class="loc-grid4">
+        ${Object.entries(LOCS).map(([t, g]) => `
+          <div class="lsc">
+            <div class="lsc-ic" style="background:${g.bc}">${g.icon}</div>
+            <div>
+              <div class="lsc-n" style="color:${g.color}">${locMap[t] || 0}</div>
+              <div class="lsc-l">${g.label}</div>
+              <div class="lsc-s">${g.items.length} địa điểm</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="ch-row">
+      <div class="ch-card">
+        <div class="ch-title">📦 Thiết Bị Theo Danh Mục</div>
+        <div class="bch">
+          ${Object.entries(catMap).sort((a, b) => b[1] - a[1]).map(([k, v], i) => `
+            <div class="bch-row">
+              <div class="bch-lbl">${esc(k)}</div>
+              <div class="bch-tr"><div class="bch-fill" style="width:${v / catMax * 100}%;background:${CC[i % CC.length]}"></div></div>
+              <div class="bch-v" style="color:${CC[i % CC.length]}">${v}</div>
+            </div>`).join('') || '<p style="font-size:12px;color:var(--txt3)">Chưa có dữ liệu</p>'}
+        </div>
+      </div>
+      <div class="ch-card">
+        <div class="ch-title">📊 Phân Bố Hao Mòn</div>
+        <div class="donut-wrap">
+          <svg width="112" height="112" viewBox="0 0 100 100" style="flex-shrink:0">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surf2)" stroke-width="15"/>
+            ${segs}
+            <text x="50" y="50" text-anchor="middle" fill="var(--txt)" font-size="14" font-weight="900" font-family="'JetBrains Mono'">${eqs.length}</text>
+            <text x="50" y="61" text-anchor="middle" fill="var(--txt3)" font-size="7">thiết bị</text>
+          </svg>
+          <div class="legend">
+            ${Object.entries(wDist).map(([k, v], i) => `
+              <div class="leg-row">
+                <div class="leg-dot" style="background:${WC[i]}"></div>
+                <span class="leg-nm">${k}</span>
+                <span class="leg-v">${v}</span>
+                <span style="font-size:10px;color:var(--txt3)">(${Math.round(v / wT * 100)}%)</span>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-title">🕒 Bảo Trì Gần Nhất</span></div>
+      <div class="tscroll">
+        ${recentMt.length ? `<table>
+          <thead><tr><th>Thiết Bị</th><th>Khu Vực</th><th>Loại BT</th><th>Ngày</th><th>NV</th><th>Chi Phí</th><th>TT</th></tr></thead>
+          <tbody>${recentMt.map(m => { const e = DB.eq.find(x => x.soSeri === m.eqSeri) || {}; return `<tr>
+            <td><b>${esc(m.tenThietBi)}</b><div style="font-size:9.5px;color:var(--txt3)">${esc(m.eqSeri)}</div></td>
+            <td>${e.diaDiem ? locBadge(e.diaDiem) : '—'}</td>
+            <td style="font-size:11.5px">${esc(m.loaiBT)}</td>
+            <td style="font-size:11.5px;color:var(--txt2)">${fmtD(m.ngayThucHien)}</td>
+            <td style="font-size:11.5px">${esc(m.nhanVien || '—')}</td>
+            <td class="mono" style="font-size:11px;color:var(--yellow)">${fmtM(m.chiPhi)}</td>
+            <td>${mtBadge(m.trangThai)}</td>
+          </tr>`; }).join('')}</tbody>
+        </table>` : emptyHtml('Chưa có lịch sử bảo trì')}
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+//  TUỔI THỌ — tính từ ngayNhap + pctHaoNam (%/năm)
+// ══════════════════════════════════════════════════════════
+function pctToMonths(pct) { return pct > 0 ? Math.round(1200 / pct) : 0; }
+function calcLifespan(ngayNhap, pctHaoNam) {
+  const nhap = parseD(ngayNhap); const pct = parseFloat(pctHaoNam);
+  if (!nhap || !pct) return null;
+  const lifeMonths = pctToMonths(pct);
+  const now = new Date();
+  const hetHan = new Date(nhap.getTime() + lifeMonths * 30.44 * 86400000);
+  const split = days => ({ y: Math.floor(days / 365), m: Math.floor((days % 365) / 30), d: days % 365 % 30 });
+  const pad = n => String(n).padStart(2, '0');
+  const fmt = o => `${o.y > 0 ? o.y + ' năm ' : ''}${pad(o.m)} tháng ${pad(o.d)} ngày`;
+  const usedDays = Math.max(0, Math.floor((now - nhap) / 86400000));
+  const leftMs = hetHan - now;
+  const isExpired = leftMs < 0;
+  const left = split(Math.abs(Math.floor(leftMs / 86400000)));
+  return {
+    pctPerYear: pct, lifeMonths,
+    usedStr: fmt(split(usedDays)),
+    leftStr: isExpired ? `⚠️ Hết hạn ${fmt(left)} trước` : fmt(left),
+    pctLeft: +Math.max(0, 100 - usedDays / (lifeMonths * 30.44) * 100).toFixed(1),
+    hetHanStr: hetHan.toLocaleDateString('vi-VN'),
+    isExpired,
+  };
+}
+function lifeColor(p) { return p > 60 ? 'var(--green)' : p > 30 ? 'var(--yellow)' : 'var(--red)'; }
+
+// ══════════════════════════════════════════════════════════
+//  EQUIPMENT
+// ══════════════════════════════════════════════════════════
+async function rEq() {
+  if (!DB.eq.length) { $('eqTbl').innerHTML = loading(); await reloadEq(); }
+  fEq();
+}
+function fEq() {
+  const q = $('eqQ').value.toLowerCase(), st = $('eqSt').value, lt = $('eqLt').value, cat = $('eqCat').value;
+  let data = DB.eq;
+  if (st) data = data.filter(e => e.trangThai === st);
+  if (lt) data = data.filter(e => e.diaDiem === lt);
+  if (cat) data = data.filter(e => e.danhMuc === cat);
+  if (q) data = data.filter(e => [e.tenThietBi, e.soSeri, e.model, e.diaDiem].join(' ').toLowerCase().includes(q));
+  renderEqTable(data);
+}
+function renderEqTable(data) {
+  $('eqTbl').innerHTML = data.length ? `
+    <table>
+      <thead><tr><th>Số Serial</th><th>Tên Thiết Bị</th><th>DM</th><th>Khu Vực</th><th>Địa Điểm</th><th>Ngày Nhập</th><th>Hao Mòn</th><th>Hiệu Quả</th><th>TT</th><th></th></tr></thead>
+      <tbody>${data.map(e => `<tr>
+        <td class="mono" style="font-size:10.5px;color:var(--blue2)">${esc(e.soSeri)}</td>
+        <td><b>${esc(e.tenThietBi)}</b><div style="font-size:9.5px;color:var(--txt3)">${esc(e.model)}</div></td>
+        <td><span style="font-size:10.5px;background:var(--surf2);padding:2px 7px;border-radius:99px">${esc(e.danhMuc || '—')}</span></td>
+        <td>${locTypeBadge(e.diaDiem)}</td>
+        <td style="font-size:11.5px;color:var(--txt2);max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(e.diaDiem)}">${esc(e.diaDiem || '—')}</td>
+        <td style="font-size:11.5px;color:var(--txt2)">${fmtD(e.ngayNhap)}</td>
+        <td>${pBar(e.haoMon, 'w')}</td>
+        <td>${pBar(e.hieuQua, 'e')}</td>
+        <td>${eqBadge(e.trangThai)}</td>
+        <td><div style="display:flex;gap:3px">
+          ${actBtn('openDP', e.soSeri, '👁', 'bg bic', 'Chi tiết')}
+          ${canEdit() ? actBtn('editEq', e.soSeri, '✏️', 'bg bic', 'Sửa') : ''}
+          ${isAdmin() ? actBtn('delEq', e.soSeri, '🗑', 'bd bic', 'Xóa') : ''}
+        </div></td>
+      </tr>`).join('')}</tbody>
+    </table>` : emptyHtml('Không tìm thấy thiết bị nào');
+}
+
+function openDP(soSeri) {
+  const e = DB.eq.find(x => x.soSeri === soSeri); if (!e) return;
+  const mts = DB.mt.filter(m => m.eqSeri === soSeri);
+  const g = LOCS[locType(e.diaDiem)];
+  const dLeft = daysLeft(e.ngayBTTiep);
+  const uc = dLeft == null ? 'var(--txt2)' : dLeft <= 7 ? 'var(--red)' : dLeft <= 14 ? 'var(--yellow)' : 'var(--green)';
+  const ls = calcLifespan(e.ngayNhap, e.pctHaoNam);
+  const lifeTxt = e.pctHaoNam ? ` → ${pctToMonths(e.pctHaoNam)} tháng (${Math.round(1200 / e.pctHaoNam / 12 * 10) / 10} năm)` : '';
+  const th = 'style="padding:7px 10px;text-align:left;color:var(--txt2);font-weight:700;white-space:nowrap"';
+  $('dpTitle').textContent = e.tenThietBi;
+  $('dpBody').innerHTML = `
+    <div class="dp-sec">
+      <div class="dp-sec-title">Thông Tin Cơ Bản</div>
+      <div class="dg">
+        <div class="di"><div class="di-l">Số Serial</div><div class="di-v mono" style="color:var(--blue2)">${esc(e.soSeri)}</div></div>
+        <div class="di"><div class="di-l">Danh Mục</div><div class="di-v">${esc(e.danhMuc || '—')}</div></div>
+        <div class="di"><div class="di-l">Model</div><div class="di-v">${esc(e.model || '—')}</div></div>
+        <div class="di"><div class="di-l">Ngày Nhập</div><div class="di-v">${fmtD(e.ngayNhap)}</div></div>
+        <div class="di"><div class="di-l">% Hao / Năm</div><div class="di-v" style="color:var(--orange)">${esc(e.pctHaoNam || '—')}%/năm${lifeTxt}</div></div>
+        <div class="di"><div class="di-l">Giá Trị</div><div class="di-v" style="color:var(--yellow)">${fmtM(e.giaTriNhap)}</div></div>
+        <div class="di"><div class="di-l">Trạng Thái</div><div class="di-v">${eqBadge(e.trangThai)}</div></div>
+      </div>
+    </div>
+    <div class="dp-sec">
+      <div class="dp-sec-title">Vị Trí Đặt Thiết Bị</div>
+      <div class="di full" style="background:${g.bc};border:1px solid ${g.bdr}">
+        <div class="di-l" style="color:${g.color}">${g.icon} ${g.label}</div>
+        <div class="di-v" style="font-size:14px">${esc(e.diaDiem || '—')}</div>
+      </div>
+    </div>
+    ${ls ? `<div class="dp-sec">
+      <div class="dp-sec-title">📊 Tuổi Thọ Thiết Bị</div>
+      <div style="overflow-x:auto;margin-top:6px">
+        <table style="width:100%;border-collapse:collapse;font-size:11.5px;min-width:520px">
+          <thead><tr style="background:var(--surf2)">
+            <th ${th}>% Hao/Năm (QĐ)</th><th ${th}>Đã Sử Dụng</th><th ${th}>Thời Gian Còn Lại</th><th ${th}>% Còn Lại</th><th ${th}>Ngày Hết Hạn SD</th>
+          </tr></thead>
+          <tbody><tr style="border-top:1px solid var(--bord)">
+            <td class="mono" style="padding:9px 10px;font-weight:700;color:var(--orange)">${ls.pctPerYear}%</td>
+            <td style="padding:9px 10px;color:var(--txt2)">${ls.usedStr}</td>
+            <td style="padding:9px 10px;color:${ls.isExpired ? 'var(--red)' : 'var(--txt)'};font-weight:${ls.isExpired ? 700 : 400}">${ls.leftStr}</td>
+            <td style="padding:9px 10px">
+              <div style="display:flex;align-items:center;gap:7px">
+                <div style="width:80px;background:var(--bord);border-radius:99px;height:7px;overflow:hidden">
+                  <div style="height:100%;width:${ls.pctLeft}%;background:${lifeColor(ls.pctLeft)};border-radius:99px"></div>
+                </div>
+                <b class="mono" style="font-size:11.5px;color:${lifeColor(ls.pctLeft)}">${ls.pctLeft}%</b>
+              </div>
+            </td>
+            <td style="padding:9px 10px;font-weight:700;color:${ls.isExpired ? 'var(--red)' : 'var(--green)'}">${ls.hetHanStr}</td>
+          </tr></tbody>
+        </table>
+      </div>
+    </div>` : ''}
+    <div class="dp-sec">
+      <div class="dp-sec-title">Tình Trạng Thực Tế</div>
+      <div style="margin-bottom:9px"><div style="font-size:10px;color:var(--txt3);margin-bottom:4px">Hao mòn thực tế</div>${pBar(e.haoMon, 'w', true)}</div>
+      <div style="margin-bottom:9px"><div style="font-size:10px;color:var(--txt3);margin-bottom:4px">Hiệu quả vận hành</div>${pBar(e.hieuQua, 'e', true)}</div>
+      ${dLeft != null ? `<div class="di"><div class="di-l">BT tiếp theo</div><div class="di-v" style="color:${uc}">${fmtD(e.ngayBTTiep)} — ${dLeft < 0 ? '⚠️ Quá hạn ' + Math.abs(dLeft) + ' ngày' : dLeft === 0 ? 'Hôm nay' : 'Còn ' + dLeft + ' ngày'}</div></div>` : ''}
+    </div>
+    ${e.moTa ? `<div class="dp-sec"><div class="dp-sec-title">Mô Tả</div><p style="font-size:12.5px;color:var(--txt2);line-height:1.7">${esc(e.moTa)}</p></div>` : ''}
+    <div class="dp-sec">
+      <div class="dp-sec-title">Lịch Sử Bảo Trì (${mts.length} lần)</div>
+      ${mts.slice(0, 5).map(m => `
+        <div style="background:var(--surf2);border-radius:var(--rsm);padding:10px;margin-bottom:7px;border-left:3px solid ${m.trangThai === 'Hoàn thành' ? 'var(--green)' : m.trangThai === 'Đang xử lý' ? 'var(--cyan)' : 'var(--yellow)'}">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+            <span style="font-size:12px;font-weight:800">${esc(m.loaiBT)}</span>${mtBadge(m.trangThai)}
+          </div>
+          <div style="font-size:10.5px;color:var(--txt3)">${fmtD(m.ngayThucHien)} · ${esc(m.nhanVien || '—')} · ${fmtM(m.chiPhi)}</div>
+          ${m.moTaCongViec ? `<div style="font-size:11.5px;color:var(--txt2);margin-top:4px">${esc(m.moTaCongViec)}</div>` : ''}
+          ${m.ghiChu ? `<div style="font-size:10.5px;color:var(--txt3);margin-top:2px;font-style:italic">💬 ${esc(m.ghiChu)}</div>` : ''}
+        </div>`).join('') || `<p style="font-size:12px;color:var(--txt3)">Chưa có lịch sử</p>`}
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      ${canEdit() ? actBtn('addMt', e.soSeri, '🔧 Ghi Nhận BT', 'bp btn-sm') + actBtn('editEq', e.soSeri, '✏️ Sửa', 'bg btn-sm') : ''}
+    </div>`;
+  $('dpanel').classList.add('on');
+}
+function closeDP() { $('dpanel').classList.remove('on'); }
+
+const EQ_STATUS = ['Hoạt động', 'Bảo trì', 'Hỏng hóc', 'Nghỉ hưu'];
+function eqFormHtml(d = {}) {
+  const locOpts = Object.values(LOCS).map(g =>
+    `<optgroup label="${g.icon} ${g.label}">${g.items.map(l => `<option value="${esc(l)}"${d.diaDiem === l ? ' selected' : ''}>${esc(l)}</option>`).join('')}</optgroup>`
+  ).join('');
+  const cats = CATS.includes(d.danhMuc) || !d.danhMuc ? CATS : [...CATS, d.danhMuc];
+  return `<div class="fg">
+    <div class="fi full"><label>Tên Thiết Bị *</label><input id="fN" value="${esc(d.tenThietBi || '')}"></div>
+    <div class="fi"><label>Số Serial * (dùng làm ID)</label><input id="fSr" value="${esc(d.soSeri || '')}" placeholder="VD: LG-VN-001" ${d.soSeri ? 'readonly style="color:var(--txt3)"' : ''}></div>
+    <div class="fi"><label>Danh Mục *</label><select id="fC">${cats.map(c => `<option${d.danhMuc === c ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></div>
+    <div class="fi"><label>Model</label><input id="fMo" value="${esc(d.model || '')}"></div>
+    <div class="fi"><label>Ngày Nhập *</label><input id="fD" type="date" value="${esc(d.ngayNhap || today())}" oninput="prevLifespan()"></div>
+    <div class="fi"><label>Giá Trị (VNĐ)</label><input id="fV" type="number" min="0" value="${esc(d.giaTriNhap || '')}"></div>
+    <div class="fi"><label>% Hao Mòn / Năm *</label><input id="fL" type="number" step="0.5" min="1" max="100" value="${esc(d.pctHaoNam || 10)}" oninput="prevLifespan()"></div>
+    <div class="fi"><label>Trạng Thái</label><select id="fSt">${EQ_STATUS.map(s => `<option${d.trangThai === s ? ' selected' : ''}>${s}</option>`).join('')}</select></div>
+    <div class="fi full" id="lifespanPrev" style="display:none">
+      <div style="background:var(--surf2);border:1px solid var(--bord2);border-radius:var(--rsm);padding:11px 13px">
+        <div style="font-size:10px;font-weight:800;color:var(--txt2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">📊 Thông Số Tuổi Thọ</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;font-size:11.5px" id="lifespanGrid"></div>
+      </div>
+    </div>
+    <div class="fi full"><label>Địa Điểm *</label>
+      <select id="fLo" onchange="prevLoc()"><option value="">-- Chọn --</option>${locOpts}</select>
+      <div class="loc-prev" id="locPrev"></div>
+    </div>
+    <div class="fi"><label>BT Tiếp Theo</label><input id="fNM" type="date" value="${esc(d.ngayBTTiep || '')}"></div>
+    <div class="fi full"><label>Mô Tả</label><textarea id="fDs">${esc(d.moTa || '')}</textarea></div>
+  </div>`;
+}
+function prevLifespan() {
+  const box = $('lifespanPrev'), grid = $('lifespanGrid'); if (!box) return;
+  const ls = calcLifespan(gv('fD'), gv('fL'));
+  if (!ls) { box.style.display = 'none'; return; }
+  box.style.display = '';
+  const row = (label, val, col) => `<div style="color:var(--txt3);font-size:10.5px">${label}</div><div class="mono" style="font-weight:700;color:${col || 'var(--txt)'};font-size:11px">${val}</div>`;
+  grid.innerHTML =
+    row('% Hao / năm (QĐ)', ls.pctPerYear + '%', 'var(--orange)') +
+    row('Tuổi thọ (tính được)', `${ls.lifeMonths} tháng (${Math.round(ls.lifeMonths / 12 * 10) / 10} năm)`, 'var(--txt2)') +
+    row('Ngày hết hạn sử dụng', ls.hetHanStr, ls.isExpired ? 'var(--red)' : 'var(--green)') +
+    row('Đã sử dụng', ls.usedStr, 'var(--txt2)') +
+    row('Thời gian còn lại', ls.leftStr, ls.isExpired ? 'var(--red)' : 'var(--txt2)') +
+    row('% Sử dụng còn lại', ls.pctLeft + '%', lifeColor(ls.pctLeft));
+}
+function prevLoc() { const v = gv('fLo'); $('locPrev').innerHTML = v ? `${locTypeBadge(v)} <span style="font-size:11.5px;color:var(--txt2)">${esc(v)}</span>` : ''; }
+function openAddEq() {
+  openModal('➕ Thêm Thiết Bị', eqFormHtml(), `<button class="btn bg" onclick="closeModal()">Hủy</button><button class="btn bp" id="mSave" onclick="submitEq(false)">💾 Lưu</button>`);
+  prevLifespan();
+}
+function openEditEq(soSeri) {
+  const e = DB.eq.find(x => x.soSeri === soSeri); if (!e) return;
+  openModal('✏️ Sửa Thiết Bị', eqFormHtml(e), `<button class="btn bg" onclick="closeModal()">Hủy</button><button class="btn bp" id="mSave" onclick="submitEq(true)">💾 Lưu</button>`);
+  prevLifespan(); prevLoc();
+}
+async function withSaving(fn) {
+  const b = $('mSave'); if (b && b.disabled) return;
+  if (b) { b.disabled = true; b.dataset.t = b.textContent; b.textContent = 'Đang lưu…'; }
+  try { await fn(); } finally { if (b && document.body.contains(b)) { b.disabled = false; b.textContent = b.dataset.t; } }
+}
+function submitEq(isEdit) {
+  return withSaving(async () => {
+    const d = { soSeri: gv('fSr'), tenThietBi: gv('fN'), danhMuc: gv('fC'), model: gv('fMo'), ngayNhap: gv('fD'),
+      giaTriNhap: parseInt(gv('fV')) || 0, pctHaoNam: parseFloat(gv('fL')) || 10, diaDiem: gv('fLo'),
+      trangThai: gv('fSt'), ngayBTTiep: gv('fNM'), moTa: gv('fDs') };
+    if (!d.tenThietBi || !d.ngayNhap) { toast('Điền tên và ngày nhập!', 'err'); return; }
+    if (!d.soSeri) { toast('Điền Số Serial!', 'err'); return; }
+    if (!d.diaDiem) { toast('Chọn địa điểm đặt thiết bị!', 'err'); return; }
+    const res = await api(isEdit ? 'editEquipment' : 'addEquipment', d);
+    if (!res.ok) { toast(res.msg || 'Lỗi khi lưu', 'err'); return; }
+    const i = DB.eq.findIndex(x => x.soSeri === d.soSeri);
+    if (i >= 0) DB.eq[i] = res.data; else DB.eq.push(res.data);
+    closeModal(); closeDP();
+    toast(isEdit ? 'Đã cập nhật thiết bị!' : 'Đã thêm thiết bị!', 'ok');
+    updateScheduleBadge();
+    if (CUR === 'equipment') fEq(); else go(CUR);
+  });
+}
+async function delEq(soSeri) {
+  const e = DB.eq.find(x => x.soSeri === soSeri);
+  if (!confirm(`Xác nhận xóa thiết bị "${e ? e.tenThietBi : soSeri}" [${soSeri}]?`)) return;
+  const res = await api('deleteEquipment', { soSeri });
+  if (!res.ok) { toast(res.msg, 'err'); return; }
+  DB.eq = DB.eq.filter(x => x.soSeri !== soSeri);
+  closeDP(); fEq(); updateScheduleBadge(); toast('Đã xóa thiết bị', 'ok');
+}
+
+// ══════════════════════════════════════════════════════════
+//  MAINTENANCE
+// ══════════════════════════════════════════════════════════
+async function rMt() { $('mtTbl').innerHTML = loading(); await reloadMt(); if (CUR === 'maintenance') fMt(); }
+function fMt() {
+  const st = $('mtSt').value;
+  let data = DB.mt.slice();
+  if (st) data = data.filter(r => r.trangThai === st);
+  data.sort((a, b) => String(b.ngayThucHien).localeCompare(String(a.ngayThucHien)));
+  renderMtTable(data);
+}
+function renderMtTable(data) {
+  const ce = canEdit();
+  $('mtTbl').innerHTML = data.length ? `
+    <table>
+      <thead><tr><th>ID</th><th>Thiết Bị</th><th>Địa Điểm</th><th>Loại BT</th><th>Ngày</th><th>NV</th><th>Chi Phí</th><th>Kết Quả</th><th>TT</th>${ce ? '<th></th>' : ''}</tr></thead>
+      <tbody>${data.map(m => { const eq = DB.eq.find(x => x.soSeri === m.eqSeri) || {}; return `<tr>
+        <td class="mono" style="font-size:9.5px;color:var(--txt3)">${esc(m.id)}</td>
+        <td><b>${esc(m.tenThietBi)}</b><div style="font-size:9.5px;color:var(--txt3)">${esc(m.eqSeri)}</div></td>
+        <td>${eq.diaDiem ? locBadge(eq.diaDiem) : '—'}</td>
+        <td style="font-size:11.5px">${esc(m.loaiBT)}</td>
+        <td style="font-size:11.5px;color:var(--txt2)">${fmtD(m.ngayThucHien)}</td>
+        <td style="font-size:11.5px">${esc(m.nhanVien || '—')}</td>
+        <td class="mono" style="font-size:11px;color:var(--yellow)">${fmtM(m.chiPhi)}</td>
+        <td style="font-size:11px;color:var(--txt2);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(m.ketQua)}">${esc(m.ketQua || '—')}</td>
+        <td>${mtBadge(m.trangThai)}</td>
+        ${ce ? `<td>${actBtn('editMt', m.id, '✏️', 'bg bic', 'Sửa')}</td>` : ''}
+      </tr>`; }).join('')}</tbody>
+    </table>` : emptyHtml('Chưa có lịch sử bảo trì');
+}
+
+const MT_TYPES = ['Bảo dưỡng định kỳ', 'Thay thế linh kiện', 'Sửa chữa', 'Kiểm tra định kỳ', 'Vệ sinh', 'Hiệu chỉnh', 'Nâng cấp'];
+const MT_STATUS = ['Hoàn thành', 'Đang xử lý', 'Chờ xử lý'];
+const MT_RESULTS = ['Tốt', 'Khá', 'Cần theo dõi', 'Đang xử lý', 'Không khắc phục được'];
+function opts(list, cur) { const l = cur && !list.includes(cur) ? [...list, cur] : list; return l.map(x => `<option${x === cur ? ' selected' : ''}>${esc(x)}</option>`).join(''); }
+function mtFormHtml(d = {}) {
+  const fu = new Date(); fu.setMonth(fu.getMonth() + 3);
+  const nextDef = `${fu.getFullYear()}-${String(fu.getMonth() + 1).padStart(2, '0')}-${String(fu.getDate()).padStart(2, '0')}`;
+  const eqOpts = DB.eq.map(e => `<option value="${esc(e.soSeri)}"${d.eqSeri === e.soSeri ? ' selected' : ''}>${esc(e.soSeri)} — ${esc(e.tenThietBi)} (${esc(e.diaDiem || '?')})</option>`).join('');
+  const staffOpts = DB.users.filter(u => u.vaiTro !== 'viewer').map(u => `<option value="${esc(u.hoTen)}">`).join('');
+  return `<div class="fg">
+    <div class="fi full"><label>Thiết Bị *</label>
+      <select id="mEq" onchange="prevMtEq()"><option value="">-- Chọn thiết bị --</option>${eqOpts}</select>
+      <div id="mEqPrev" class="loc-prev"></div>
+    </div>
+    <div class="fi"><label>Loại Bảo Trì</label><select id="mTy">${opts(MT_TYPES, d.loaiBT)}</select></div>
+    <div class="fi"><label>Ngày Thực Hiện *</label><input id="mDt" type="date" value="${esc(d.ngayThucHien || today())}"></div>
+    <div class="fi"><label>Nhân Viên</label><input id="mSt" value="${esc(d.nhanVien || (ME ? ME.hoTen : ''))}" list="staffL"><datalist id="staffL">${staffOpts}</datalist></div>
+    <div class="fi"><label>Chi Phí (VNĐ)</label><input id="mCo" type="number" min="0" value="${esc(d.chiPhi || '')}"></div>
+    <div class="fi"><label>Kết Quả</label><select id="mKq">${opts(MT_RESULTS, d.ketQua)}</select></div>
+    <div class="fi"><label>Trạng Thái</label><select id="mTT">${opts(MT_STATUS, d.trangThai)}</select></div>
+    <div class="fi"><label>BT Tiếp Theo</label><input id="mNM" type="date" value="${esc(d.id ? (d.ngayBTTiep || '') : nextDef)}"></div>
+    <div class="fi full"><label>Mô Tả Công Việc</label><textarea id="mWk">${esc(d.moTaCongViec || '')}</textarea></div>
+    <div class="fi full"><label>Ghi Chú</label><textarea id="mNo" style="min-height:50px">${esc(d.ghiChu || '')}</textarea></div>
+  </div>`;
+}
+function prevMtEq() { const eq = DB.eq.find(x => x.soSeri === gv('mEq')); $('mEqPrev').innerHTML = eq ? `${locBadge(eq.diaDiem)} <span style="font-size:11.5px;color:var(--txt2)">${esc(eq.tenThietBi)}</span>` : ''; }
+function openAddMt(eqSeri = '') {
+  closeDP();
+  openModal('🔧 Ghi Nhận Bảo Trì', mtFormHtml({ eqSeri }), `<button class="btn bg" onclick="closeModal()">Hủy</button><button class="btn bp" id="mSave" onclick="submitMt('')">💾 Lưu</button>`);
+  prevMtEq();
+}
+function openEditMt(id) {
+  const m = DB.mt.find(x => x.id === id); if (!m) return;
+  openModal('✏️ Sửa Bảo Trì', mtFormHtml(m), `<button class="btn bg" onclick="closeModal()">Hủy</button><button class="btn bp" id="mSave" data-id="${esc(id)}" onclick="submitMt(this.dataset.id)">💾 Lưu</button>`);
+  prevMtEq();
+}
+function submitMt(eid) {
+  return withSaving(async () => {
+    const eqSeri = gv('mEq'); if (!eqSeri) { toast('Chọn thiết bị!', 'err'); return; }
+    const eq = DB.eq.find(x => x.soSeri === eqSeri);
+    const d = { eqSeri, tenThietBi: eq ? eq.tenThietBi : '', loaiBT: gv('mTy'), ngayThucHien: gv('mDt'), nhanVien: gv('mSt'),
+      chiPhi: parseInt(gv('mCo')) || 0, ketQua: gv('mKq'), trangThai: gv('mTT'), ngayBTTiep: gv('mNM'),
+      moTaCongViec: gv('mWk'), ghiChu: gv('mNo') };
+    if (!d.ngayThucHien) { toast('Chọn ngày thực hiện!', 'err'); return; }
+    if (eid) d.id = eid;
+    const res = await api(eid ? 'editMaintenance' : 'addMaintenance', d);
+    if (!res.ok) { toast(res.msg, 'err'); return; }
+    if (eid) { const i = DB.mt.findIndex(x => x.id === eid); if (i >= 0) DB.mt[i] = res.data; }
+    else DB.mt.unshift(res.data);
+    if (d.ngayBTTiep && eq) eq.ngayBTTiep = d.ngayBTTiep;
+    closeModal(); updateScheduleBadge();
+    toast(eid ? 'Đã cập nhật!' : 'Ghi nhận thành công!', 'ok');
+    if (CUR === 'maintenance') fMt(); else go(CUR);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+//  SCHEDULE
+// ══════════════════════════════════════════════════════════
+async function rSched() {
+  $('schedTbl').innerHTML = loading();
+  const res = await api('getSchedule');
+  if (CUR !== 'schedule') return;
+  if (!res.ok) { $('schedTbl').innerHTML = errHtml(res.msg); return; }
+  const data = res.data;
+  if (!data.length) { $('schedTbl').innerHTML = emptyHtml('Không có thiết bị nào sắp đến hạn trong 60 ngày'); return; }
+  $('schedTbl').innerHTML = `<table>
+    <thead><tr><th>Thiết Bị</th><th>Khu Vực</th><th>Địa Điểm</th><th>Ngày BT</th><th>Còn Lại</th><th>Hao Mòn</th><th>TT</th>${canEdit() ? '<th></th>' : ''}</tr></thead>
+    <tbody>${data.map(e => {
+      const d = daysLeft(e.ngayBTTiep);
+      const oc = d <= 7 ? 'var(--red)' : d <= 14 ? 'var(--yellow)' : 'var(--green)';
+      return `<tr>
+        <td><b>${esc(e.tenThietBi)}</b><div style="font-size:9.5px;color:var(--txt3)">${esc(e.soSeri)}</div></td>
+        <td>${locTypeBadge(e.diaDiem)}</td>
+        <td style="font-size:11.5px;color:var(--txt2)">${esc(e.diaDiem || '—')}</td>
+        <td style="font-size:12px">${fmtD(e.ngayBTTiep)}</td>
+        <td class="mono" style="color:${oc};font-weight:800;font-size:11.5px">${d < 0 ? 'Trễ ' + Math.abs(d) + ' ngày' : d === 0 ? 'Hôm nay' : 'Còn ' + d + ' ngày'}</td>
+        <td>${pBar(e.haoMon, 'w')}</td>
+        <td>${eqBadge(e.trangThai)}</td>
+        ${canEdit() ? `<td>${actBtn('addMt', e.soSeri, '+ Ghi Nhận', 'bs btn-sm')}</td>` : ''}
+      </tr>`; }).join('')}</tbody></table>`;
+}
+
+// ══════════════════════════════════════════════════════════
+//  LOCATIONS
+// ══════════════════════════════════════════════════════════
+let LOC_FILTER = '';
+async function rLocs() {
+  $('pg-locations').innerHTML = loading();
+  await reloadLocs();
+  if (CUR !== 'locations') return;
+  const stat = {};
+  DB.eq.forEach(e => {
+    if (!e.diaDiem) return;
+    const s = stat[e.diaDiem] || (stat[e.diaDiem] = { n: 0, w: 0, e: 0, items: [] });
+    s.n++; s.w += +e.haoMon || 0; s.e += +e.hieuQua || 0; s.items.push(e.tenThietBi);
+  });
+  const ad = isAdmin();
+  let html = `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+    <div class="fchips" id="locFc" style="margin:0">
+      <div class="fchip" data-act="filterLT" data-id="">Tất cả</div>
+      ${Object.entries(LOCS).map(([t, g]) => `<div class="fchip" data-act="filterLT" data-id="${t}">${g.icon} ${g.label}</div>`).join('')}
+    </div>
+    ${ad ? `<button class="btn bp btn-sm" onclick="openAddLoc()">＋ Thêm Địa Điểm</button>` : ''}
+  </div>`;
+  Object.entries(LOCS).forEach(([type, g]) => {
+    html += `<div class="card" style="margin-bottom:14px" data-lt="${type}">
+      <div class="card-hd" style="background:${g.bc};border-bottom-color:${g.bdr}">
+        <span style="font-size:16px">${g.icon}</span>
+        <span class="card-title" style="color:${g.color}">${g.label}</span>
+        <span class="lb ${g.cls}">${g.items.length} địa điểm</span>
+      </div>
+      <div class="tscroll">${g.items.length ? `<table>
+        <thead><tr><th>Địa Điểm</th><th>Số TB</th><th>Thiết Bị (mẫu)</th><th>Hao Mòn TB</th><th>Hiệu Quả TB</th><th></th></tr></thead>
+        <tbody>${g.items.map(loc => {
+          const s = stat[loc] || { n: 0, w: 0, e: 0, items: [] };
+          const short = n => n.length > 16 ? n.slice(0, 16) + '…' : n;
+          return `<tr>
+            <td style="font-weight:700">${g.icon} ${esc(loc)}</td>
+            <td class="mono" style="font-weight:700;color:${g.color}">${s.n}</td>
+            <td style="max-width:190px">${s.items.slice(0, 3).map(n => `<span style="font-size:10px;background:var(--surf2);padding:1px 6px;border-radius:99px;margin-right:3px">${esc(short(n))}</span>`).join('')}${s.n > 3 ? `<span style="font-size:10px;color:var(--txt3)">+${s.n - 3}</span>` : ''}</td>
+            <td>${s.n ? pBar((s.w / s.n).toFixed(1), 'w') : '<span style="font-size:11px;color:var(--txt3)">—</span>'}</td>
+            <td>${s.n ? pBar((s.e / s.n).toFixed(1), 'e') : '<span style="font-size:11px;color:var(--txt3)">—</span>'}</td>
+            <td><div style="display:flex;gap:4px">
+              ${actBtn('viewLoc', loc, 'Xem TB →', 'bg btn-xs')}
+              ${ad ? actBtn('editLoc', loc, '✏️', 'bg btn-xs', 'Sửa', ` data-x="${type}"`) + actBtn('delLoc', loc, '🗑', 'bd btn-xs', 'Xóa') : ''}
+            </div></td>
+          </tr>`; }).join('')}
+        </tbody></table>` : emptyHtml('Chưa có địa điểm trong nhóm này')}</div>
+    </div>`;
+  });
+  $('pg-locations').innerHTML = html;
+  filterLT(LOC_FILTER);
+}
+function filterLT(type) {
+  LOC_FILTER = type || '';
+  document.querySelectorAll('#locFc .fchip').forEach(c => c.classList.toggle('on', c.dataset.id === LOC_FILTER));
+  document.querySelectorAll('#pg-locations [data-lt]').forEach(el => { el.style.display = (!LOC_FILTER || el.dataset.lt === LOC_FILTER) ? '' : 'none'; });
+}
+function filterByLoc(loc) {
+  $('eqQ').value = ''; $('eqSt').value = ''; $('eqCat').value = '';
+  $('eqLt').value = loc; go('equipment');
+}
+function locFormHtml(d = {}) {
+  return `<div class="fg">
+    <div class="fi full"><label>Tên Địa Điểm *</label><input id="lN" value="${esc(d.ten || '')}" placeholder="VD: Phòng Lab Sinh học"></div>
+    <div class="fi full"><label>Nhóm / Loại *</label>
+      <select id="lT">${Object.entries(LOCS_META).map(([k, m]) => `<option value="${k}"${d.loai === k ? ' selected' : ''}>${m.icon} ${m.label}</option>`).join('')}</select>
+    </div>
+  </div>`;
+}
+let LOC_EDITING = '';
+function openAddLoc() { LOC_EDITING = ''; openModal('➕ Thêm Địa Điểm', locFormHtml(), `<button class="btn bg" onclick="closeModal()">Hủy</button><button class="btn bp" id="mSave" onclick="submitLoc()">💾 Lưu</button>`); }
+function openEditLoc(ten, loai) { LOC_EDITING = ten; openModal('✏️ Sửa Địa Điểm', locFormHtml({ ten, loai }), `<button class="btn bg" onclick="closeModal()">Hủy</button><button class="btn bp" id="mSave" onclick="submitLoc()">💾 Lưu</button>`); }
+function submitLoc() {
+  return withSaving(async () => {
+    const ten = gv('lN'), loai = gv('lT'), tenCu = LOC_EDITING;
+    if (!ten) { toast('Nhập tên địa điểm!', 'err'); return; }
+    const res = tenCu ? await api('editLocation', { tenCu, ten, loai }) : await api('addLocation', { ten, loai });
+    if (!res.ok) { toast(res.msg, 'err'); return; }
+    if (tenCu && tenCu !== ten) DB.eq.forEach(e => { if (e.diaDiem === tenCu) e.diaDiem = ten; });
+    closeModal();
+    toast(tenCu ? 'Đã cập nhật địa điểm!' : 'Đã thêm địa điểm!', 'ok');
+    rLocs();
+  });
+}
+async function doDelLoc(ten) {
+  if (!confirm(`Xóa địa điểm "${ten}"?`)) return;
+  const res = await api('deleteLocation', { ten });
+  if (!res.ok) { toast(res.msg, 'err'); return; }
+  toast('Đã xóa địa điểm', 'ok'); rLocs();
+}
+
+// ══════════════════════════════════════════════════════════
+//  USERS (Admin)
+// ══════════════════════════════════════════════════════════
+async function rUsers() {
+  $('userTbl').innerHTML = loading();
+  const res = await api('getUsers');
+  if (CUR !== 'users') return;
+  if (!res.ok) { $('userTbl').innerHTML = errHtml(res.msg); return; }
+  DB.users = res.data;
+  $('userTbl').innerHTML = res.data.length ? `
+    <table>
+      <thead><tr><th>CCCD</th><th>Họ Tên</th><th>Vai Trò</th><th>Đơn Vị</th><th>SĐT</th><th>Email</th><th>TT</th><th></th></tr></thead>
+      <tbody>${res.data.map(u => `<tr>
+        <td class="mono" style="font-size:11px;color:var(--blue2)">${esc(u.cccd)}</td>
+        <td><b>${esc(u.hoTen)}</b>${u.cccd === ME.cccd ? ' <span style="font-size:10px;color:var(--txt3)">(bạn)</span>' : ''}</td>
+        <td><span class="urb ${ROLE_CLS[u.vaiTro] || 'rbv'}">${ROLE_LABEL[u.vaiTro] || 'Viewer'}</span></td>
+        <td style="font-size:12px">${esc(u.donVi || '—')}</td>
+        <td class="mono" style="font-size:11px">${esc(u.sdt || '—')}</td>
+        <td style="font-size:11px;color:var(--txt2)">${esc(u.email || '—')}</td>
+        <td><span class="badge ${u.trangThai === 'active' ? 'b-act' : 'b-ret'}">${u.trangThai === 'active' ? 'Hoạt động' : 'Ngừng'}</span></td>
+        <td><div style="display:flex;gap:3px">
+          ${actBtn('editUser', u.cccd, '✏️', 'bg bic', 'Sửa')}
+          ${u.cccd !== ME.cccd ? actBtn('delUser', u.cccd, '🗑', 'bd bic', 'Xóa') : ''}
+        </div></td>
+      </tr>`).join('')}</tbody>
+    </table>` : emptyHtml('Chưa có nhân viên');
+}
+function userFormHtml(d = {}) {
+  const depts = Object.values(LOCS).flatMap(g => g.items);
+  const isEdit = !!d.cccd;
+  const r = d.vaiTro || 'technician';
+  return `<div class="fg">
+    <div class="fi full"><label>Họ Tên *</label><input id="uN" value="${esc(d.hoTen || '')}" placeholder="Nguyễn Văn A"></div>
+    <div class="fi full">
+      <label>Số CCCD * (cũng là mật khẩu đăng nhập)</label>
+      <input id="uC" value="${esc(d.cccd || '')}" maxlength="12" inputmode="numeric" placeholder="9 hoặc 12 chữ số" oninput="this.value=this.value.replace(/\\D/g,'')" ${isEdit ? 'readonly style="color:var(--txt3)"' : ''}>
+      <div class="hint">💡 Nhân viên đăng nhập bằng số CCCD này + mã OTP gửi về email${isEdit ? ' (không sửa được CCCD sau khi tạo)' : ''}</div>
+    </div>
+    <div class="fi"><label>Vai Trò</label><select id="uR">
+      <option value="technician"${r === 'technician' ? ' selected' : ''}>Kỹ Thuật Viên</option>
+      <option value="admin"${r === 'admin' ? ' selected' : ''}>Admin</option>
+      <option value="viewer"${r === 'viewer' ? ' selected' : ''}>Viewer</option>
+    </select></div>
+    <div class="fi"><label>Trạng Thái</label><select id="uSt">
+      <option value="active"${(d.trangThai || 'active') === 'active' ? ' selected' : ''}>Hoạt động</option>
+      <option value="inactive"${d.trangThai === 'inactive' ? ' selected' : ''}>Ngừng</option>
+    </select></div>
+    <div class="fi full"><label>Đơn Vị</label><input id="uD" value="${esc(d.donVi || '')}" list="dL"><datalist id="dL">${depts.map(x => `<option value="${esc(x)}">`).join('')}</datalist></div>
+    <div class="fi"><label>SĐT</label><input id="uP" value="${esc(d.sdt || '')}" placeholder="09xxxxxxxx"></div>
+    <div class="fi"><label>Email * (nhận mã OTP)</label><input id="uE" type="email" value="${esc(d.email || '')}" placeholder="...@truongduoc.edu.vn"></div>
+  </div>`;
+}
+function openAddUser() {
+  openModal('👤 Thêm Nhân Viên', userFormHtml(), `<button class="btn bg" onclick="closeModal()">Hủy</button><button class="btn bp" id="mSave" onclick="submitUser(false)">➕ Thêm</button>`);
+}
+function openEditUser(cccd) {
+  const u = DB.users.find(x => x.cccd === cccd); if (!u) return;
+  openModal('✏️ Sửa Nhân Viên', userFormHtml(u), `<button class="btn bg" onclick="closeModal()">Hủy</button><button class="btn bp" id="mSave" onclick="submitUser(true)">💾 Lưu</button>`);
+}
+function submitUser(isEdit) {
+  return withSaving(async () => {
+    const d = { cccd: gv('uC'), hoTen: gv('uN'), vaiTro: gv('uR'), trangThai: gv('uSt'), donVi: gv('uD'), sdt: gv('uP'), email: gv('uE') };
+    if (!d.hoTen || !d.cccd) { toast('Điền họ tên và CCCD!', 'err'); return; }
+    if (!/^\d{9}$|^\d{12}$/.test(d.cccd)) { toast('CCCD không hợp lệ (9 hoặc 12 số)!', 'err'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) { toast('Nhập email hợp lệ — dùng để nhận mã OTP khi đăng nhập!', 'err'); return; }
+    const res = await api(isEdit ? 'editUser' : 'addUser', d);
+    if (!res.ok) { toast(res.msg, 'err'); return; }
+    closeModal(); toast(isEdit ? 'Đã cập nhật nhân viên!' : 'Đã thêm nhân viên!', 'ok'); rUsers();
+  });
+}
+async function delUser(cccd) {
+  const u = DB.users.find(x => x.cccd === cccd);
+  if (!confirm(`Xóa nhân viên "${u ? u.hoTen : cccd}"? Người này sẽ không đăng nhập được nữa.`)) return;
+  const res = await api('deleteUser', { cccd });
+  if (!res.ok) { toast(res.msg, 'err'); return; }
+  toast('Đã xóa nhân viên', 'ok'); rUsers();
+}
+
+// ══════════════════════════════════════════════════════════
+//  REPORTS (Admin)
+// ══════════════════════════════════════════════════════════
+async function rReports() {
+  const pg = $('pg-reports');
+  pg.innerHTML = loading();
+  const [rl] = await Promise.all([api('getLog'), reloadEq(), reloadMt()]);
+  if (CUR !== 'reports') return;
+  DB.log = rl.ok ? rl.data : [];
+  const eq = DB.eq, mt = DB.mt;
+  const topW = [...eq].sort((a, b) => (b.haoMon || 0) - (a.haoMon || 0)).slice(0, 5);
+  const costByT = { bomon: 0, phcn: 0, gd: 0, ph: 0 };
+  mt.forEach(m => { const e = eq.find(x => x.soSeri === m.eqSeri); if (e) { const t = locType(e.diaDiem); if (costByT[t] !== undefined) costByT[t] += parseFloat(m.chiPhi) || 0; } });
+  const monthly = {}; mt.forEach(m => { const ym = String(m.ngayThucHien || '').slice(0, 7); if (/^\d{4}-\d{2}$/.test(ym)) monthly[ym] = (monthly[ym] || 0) + (parseFloat(m.chiPhi) || 0); });
+  const months = Object.keys(monthly).sort().slice(-6);
+  const maxM = Math.max(...months.map(k => monthly[k]), 1);
+  const maxCT = Math.max(...Object.values(costByT), 1);
+  const totalCost = mt.reduce((s, m) => s + (parseFloat(m.chiPhi) || 0), 0);
+  pg.innerHTML = `
+    <div class="sgrid" style="grid-template-columns:repeat(auto-fill,minmax(195px,1fr))">
+      ${sb('Tổng Thiết Bị', eq.length, '🖥️', 'var(--blue)', 'rgba(26,122,60,.12)', `Tại ${new Set(eq.map(e => e.diaDiem).filter(Boolean)).size} địa điểm`)}
+      ${sb('Tổng Chi Phí BT', fmtM(totalCost), '💰', 'var(--yellow)', 'rgba(217,119,6,.12)', mt.length + ' lần bảo trì')}
+      ${sb('Hao Mòn TB', eq.length ? (eq.reduce((s, e) => s + (+e.haoMon || 0), 0) / eq.length).toFixed(1) + '%' : '0%', '⚠️', 'var(--orange)', 'rgba(234,88,12,.12)', 'Trung bình')}
+      ${sb('Cần Chú Ý', eq.filter(e => e.haoMon > 75 || e.trangThai === 'Hỏng hóc').length, '🚨', 'var(--red)', 'rgba(220,38,38,.12)', 'Hao mòn >75% hoặc hỏng')}
+    </div>
+    <div class="ch-row">
+      <div class="ch-card">
+        <div class="ch-title">🔥 Top 5 Thiết Bị Hao Mòn Cao</div>
+        ${topW.map(e => `
+          <div style="margin-bottom:11px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <div><span style="font-size:12px;font-weight:700">${esc(e.tenThietBi)}</span><span style="font-size:9.5px;color:var(--txt3);margin-left:5px">${esc(e.soSeri)}</span></div>
+            </div>
+            <div style="font-size:10px;margin-bottom:4px">${locBadge(e.diaDiem)}</div>
+            ${pBar(e.haoMon, 'w', true)}
+          </div>`).join('') || '<p style="font-size:12px;color:var(--txt3)">Chưa có dữ liệu</p>'}
+      </div>
+      <div class="ch-card">
+        <div class="ch-title">💰 Chi Phí BT Theo Khu Vực</div>
+        <div class="bch">
+          ${Object.entries(costByT).map(([t, v]) => { const g = LOCS[t]; return `
+            <div class="bch-row">
+              <div class="bch-lbl">${g.icon} ${g.label}</div>
+              <div class="bch-tr"><div class="bch-fill" style="width:${v / maxCT * 100}%;background:${g.color}"></div></div>
+              <div class="bch-v" style="color:${g.color};font-size:9.5px;width:58px">${fmtM(v)}</div>
+            </div>`; }).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="ch-card" style="margin-bottom:15px">
+      <div class="ch-title">📅 Chi Phí BT 6 Tháng Có Dữ Liệu Gần Nhất</div>
+      <div class="bch">
+        ${months.map(m => `
+          <div class="bch-row">
+            <div class="bch-lbl">${m.slice(5)}/${m.slice(0, 4)}</div>
+            <div class="bch-tr"><div class="bch-fill" style="width:${monthly[m] / maxM * 100}%;background:var(--blue)"></div></div>
+            <div class="bch-v" style="font-size:9.5px;width:58px">${fmtM(monthly[m])}</div>
+          </div>`).join('') || '<p style="font-size:12px;color:var(--txt3)">Chưa có dữ liệu</p>'}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-title">📋 Nhật Ký Hoạt Động (100 gần nhất)</span></div>
+      <div style="padding:6px 13px;max-height:480px;overflow-y:auto">
+        ${DB.log.map(l => `
+          <div class="log-row">
+            <div class="log-dot"></div>
+            <div><div style="font-size:12.5px"><b>${esc(l.hanhDong)}</b> — ${esc(l.chiTiet)}</div>
+              <div style="font-size:10px;color:var(--txt3);margin-top:2px">${esc(l.thoiGian)} · ${esc(l.nguoiThucHien || 'Hệ thống')}</div>
+            </div>
+          </div>`).join('') || '<p style="font-size:12px;color:var(--txt3);padding:10px 0">Chưa có hoạt động</p>'}
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+//  PROFILE
+// ══════════════════════════════════════════════════════════
+function rProfile() {
+  const [bg, fg] = ROLE_COLOR[ME.vaiTro] || ROLE_COLOR.viewer;
+  const myMt = DB.mt.filter(m => m.nhanVien === ME.hoTen);
+  const PERMS = [['Xem Dashboard', true], ['Xem Thiết Bị', true], ['Thêm/Sửa Thiết Bị', canEdit()],
+    ['Xóa Thiết Bị', isAdmin()], ['Ghi Nhận Bảo Trì', canEdit()], ['Quản Lý Địa Điểm', isAdmin()],
+    ['Quản Lý Nhân Viên', isAdmin()], ['Xem Báo Cáo & Nhật Ký', isAdmin()], ['Cài Đặt Hệ Thống', isAdmin()]];
+  $('pg-profile').innerHTML = `
+    <div style="background:linear-gradient(135deg,${bg},transparent);border:1px solid var(--bord);border-radius:var(--r);padding:26px;display:flex;align-items:center;gap:18px;margin-bottom:16px;flex-wrap:wrap">
+      <div style="width:68px;height:68px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:${fg};border:3px solid ${fg};flex-shrink:0">${esc((ME.hoTen || '?')[0])}</div>
+      <div>
+        <div style="font-size:21px;font-weight:900">${esc(ME.hoTen)}</div>
+        <div style="font-size:12.5px;color:var(--txt2);margin-top:3px">${esc(ME.donVi || '—')}</div>
+        <div class="mono" style="font-size:13px;color:${fg};margin-top:5px;letter-spacing:1px">🪪 ${esc(maskCccd(ME.cccd))}</div>
+        <div style="margin-top:7px"><span class="urb ${ROLE_CLS[ME.vaiTro] || 'rbv'}" style="font-size:11px">${{ admin: 'Quản Trị Viên', technician: 'Kỹ Thuật Viên', viewer: 'Người Xem' }[ME.vaiTro] || esc(ME.vaiTro)}</span></div>
+      </div>
+    </div>
+    <div class="ch-row">
+      <div class="ch-card">
+        <div class="ch-title">📋 Thông Tin Liên Hệ</div>
+        <div class="dg">
+          <div class="di full"><div class="di-l">Đơn Vị</div><div class="di-v">${esc(ME.donVi || '—')}</div></div>
+          <div class="di"><div class="di-l">SĐT</div><div class="di-v">${esc(ME.sdt || '—')}</div></div>
+          <div class="di"><div class="di-l">Email</div><div class="di-v" style="font-size:11.5px;word-break:break-all">${esc(ME.email || '—')}</div></div>
+        </div>
+      </div>
+      <div class="ch-card">
+        <div class="ch-title">📊 Thống Kê Cá Nhân</div>
+        <div class="dg">
+          <div class="di"><div class="di-l">Tổng BT</div><div class="di-v" style="color:var(--blue2)">${myMt.length}</div></div>
+          <div class="di"><div class="di-l">Hoàn thành</div><div class="di-v" style="color:var(--green)">${myMt.filter(m => m.trangThai === 'Hoàn thành').length}</div></div>
+          <div class="di"><div class="di-l">Đang xử lý</div><div class="di-v" style="color:var(--yellow)">${myMt.filter(m => m.trangThai === 'Đang xử lý').length}</div></div>
+          <div class="di"><div class="di-l">Chi phí đã xử lý</div><div class="di-v" style="color:var(--yellow)">${fmtM(myMt.reduce((s, m) => s + (parseFloat(m.chiPhi) || 0), 0))}</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-title">🔐 Phân Quyền</span></div>
+      <div style="padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:8px">
+        ${PERMS.map(([l, ok]) => `<div style="display:flex;align-items:center;gap:7px;font-size:12.5px"><span>${ok ? '✅' : '❌'}</span>${l}</div>`).join('')}
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+//  CONFIG (Admin)
+// ══════════════════════════════════════════════════════════
+function rConfig() {
+  $('pg-config').innerHTML = `
+  <div class="card" style="max-width:600px;margin:0 auto">
+    <div class="card-hd"><span class="card-title">⚙️ Cài Đặt Hệ Thống</span></div>
+    <div style="padding:20px;display:flex;flex-direction:column;gap:16px">
+      <div>
+        <div class="sys-row"><span>Phiên bản</span><b>EMS v4.1</b></div>
+        <div class="sys-row"><span>Máy chủ giao diện</span><b>Cloudflare Pages</b></div>
+        <div class="sys-row"><span>Cơ sở dữ liệu</span><b>Google Sheets (Apps Script)</b></div>
+        <div class="sys-row"><span>Đăng nhập</span><b>CCCD + OTP email (5 phút)</b></div>
+        <div class="sys-row"><span>Số thiết bị / bảo trì / địa điểm</span><b>${DB.eq.length} / ${DB.mt.length} / ${DB.locs.length}</b></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn bg btn-sm" onclick="testConnection()">🔌 Kiểm Tra Kết Nối</button>
+        <button class="btn bd btn-sm" onclick="initSystem()">🚀 Khởi Tạo Lại Dữ Liệu Mẫu</button>
+      </div>
+      <div id="cfgLog" style="font-size:12px;color:var(--txt2);line-height:1.7"></div>
+      <div style="background:var(--surf2);border-radius:var(--rsm);padding:14px;border-left:3px solid var(--yellow);font-size:12px;color:var(--txt2);line-height:1.7">
+        <b style="color:var(--yellow)">⚠️ Lưu ý:</b> "Khởi tạo lại" sẽ <b>xóa toàn bộ</b> thiết bị, bảo trì, nhân viên, địa điểm và nhật ký trong Google Sheet rồi tạo lại dữ liệu mẫu.
+        Email cảnh báo bảo trì gửi tới email của các Admin đang hoạt động (cần chạy <code>setupTrigger()</code> một lần trong Apps Script).
+      </div>
+    </div>
+  </div>`;
+}
+async function testConnection() {
+  $('cfgLog').textContent = '🔌 Đang kiểm tra kết nối...';
+  const t = performance.now();
+  const res = await api('me');
+  $('cfgLog').textContent = res.ok ? `✅ Kết nối thành công (${Math.round(performance.now() - t)} ms).` : '❌ Kết nối thất bại: ' + res.msg;
+}
+async function initSystem() {
+  if (!confirm('Khởi tạo sẽ XÓA và ghi đè toàn bộ dữ liệu trong Google Sheet. Tiếp tục?')) return;
+  if (prompt('Gõ KHOITAO để xác nhận:') !== 'KHOITAO') { toast('Đã hủy', 'info'); return; }
+  $('cfgLog').textContent = '🚀 Đang khởi tạo...';
+  const res = await api('init');
+  $('cfgLog').textContent = res.ok ? '✅ ' + res.msg + ' Vui lòng đăng nhập lại.' : '❌ ' + res.msg;
+  if (res.ok) { toast(res.msg, 'ok'); setTimeout(logout, 1500); }
+}
+
+// ══════════════════════════════════════════════════════════
+//  MODAL
+// ══════════════════════════════════════════════════════════
+function openModal(title, body, foot) {
+  $('mTitle').textContent = title;
+  $('mBody').innerHTML = body;
+  $('mFt').innerHTML = foot;
+  $('mOverlay').classList.add('on');
+  setTimeout(() => { const f = $('mBody').querySelector('input:not([readonly]),select'); if (f) f.focus(); }, 50);
+}
+function closeModal() { $('mOverlay').classList.remove('on'); }
+function ovClick(e) { if (e.target === $('mOverlay')) closeModal(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeDP(); } });
+
+// ══════════════════════════════════════════════════════════
+//  START — khôi phục phiên nếu còn token
+// ══════════════════════════════════════════════════════════
+(async function start() {
+  if (TOKEN) {
+    const res = await api('me');
+    if (res.ok) { ME = res.user; boot(); return; }
+  }
+  resetLogin();
+})();
+</script>
+</body>
+</html>
