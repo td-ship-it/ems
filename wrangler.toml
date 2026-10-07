@@ -1,6 +1,6 @@
 # Cloudflare Worker + Static Assets
 # "name" phải TRÙNG tên Worker đã tạo trên Cloudflare Dashboard.
-name = "ems-truong-duoc"
+name = "ems"
 main = "src/worker.js"
 compatibility_date = "2026-01-01"
 
