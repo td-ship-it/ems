@@ -3,8 +3,8 @@
 Ứng dụng web quản lý thiết bị, lịch sử bảo trì, lịch bảo trì định kỳ, địa điểm và nhân viên.
 
 ```
-Trình duyệt ──► Cloudflare Pages (public/index.html)
-                    │  POST /api   (functions/api.js — giữ API key bí mật)
+Trình duyệt ──► Cloudflare Worker (file tĩnh public/index.html)
+                    │  POST /api   (src/api.js — giữ API key bí mật)
                     ▼
              Google Apps Script (apps-script/Code.gs)
                     ▼
@@ -16,11 +16,13 @@ Trình duyệt ──► Cloudflare Pages (public/index.html)
 | Đường dẫn | Mô tả |
 |---|---|
 | `public/index.html` | Giao diện (HTML/CSS/JS một file) |
-| `public/_headers` | Header bảo mật cho Cloudflare Pages |
-| `functions/api.js` | Cloudflare Pages Function: proxy `/api` → Apps Script |
+| `public/_headers` | Header bảo mật cho trang web |
+| `src/worker.js` | Cloudflare Worker: `/api` → Apps Script, còn lại trả file tĩnh |
+| `src/api.js` | Xử lý proxy `/api` (dùng chung) |
+| `functions/api.js` | Chỉ dùng nếu deploy bằng Cloudflare Pages |
 | `apps-script/Code.gs` | Backend Google Apps Script |
 | `apps-script/appsscript.json` | Manifest Apps Script (múi giờ, quyền Web App) |
-| `wrangler.toml` | Cấu hình Cloudflare Pages |
+| `wrangler.toml` | Cấu hình Cloudflare Worker |
 
 ---
 
@@ -53,23 +55,36 @@ git remote add origin https://github.com/<tai-khoan>/ems-truong-duoc.git
 git push -u origin main
 ```
 
-## Bước 3 — Deploy lên Cloudflare Pages
+## Bước 3 — Deploy lên Cloudflare (Worker)
 
-1. Đăng nhập [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages → Create → Pages → Connect to Git**.
+1. Đăng nhập [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages → Create → Import a repository** (Connect to Git).
 2. Chọn repo `ems-truong-duoc`, nhánh `main`.
 3. Cấu hình build:
-   - *Framework preset*: **None**
+   - *Project name*: **`ems-truong-duoc`** — phải trùng dòng `name` trong `wrangler.toml` (nếu đặt tên khác, sửa `name` trong `wrangler.toml` cho khớp).
    - *Build command*: *(để trống)*
-   - *Build output directory*: **`public`**
-4. **Environment variables** (thêm cho cả *Production* và *Preview*):
-   | Tên | Giá trị | Loại |
-   |---|---|---|
-   | `GAS_URL` | URL Web App ở Bước 1.9 | Text |
-   | `GAS_KEY` | API key ở Bước 1.5 | **Secret** (Encrypt) |
-5. Bấm **Save and Deploy**. Sau khoảng 1 phút bạn có địa chỉ `https://ems-truong-duoc.pages.dev`.
-6. Mỗi lần `git push` lên `main`, Cloudflare tự deploy lại.
+   - *Deploy command*: **`npx wrangler deploy`** (mặc định)
+4. Bấm **Deploy**. Lần đầu trang mở được nhưng chưa đăng nhập được vì chưa có biến môi trường.
+5. Vào Worker → **Settings → Variables and Secrets → Add**, thêm 2 biến, **chọn loại Secret** cho cả hai:
+   | Tên | Giá trị |
+   |---|---|
+   | `GAS_URL` | URL Web App ở Bước 1.9 (kết thúc bằng `/exec`) |
+   | `GAS_KEY` | API key ở Bước 1.5 |
+   Bấm **Deploy** để áp dụng.
+6. Địa chỉ web: `https://ems-truong-duoc.<tên-tài-khoản>.workers.dev` (xem ở tab **Settings → Domains & Routes**; có thể gắn tên miền riêng tại đây).
+7. Mỗi lần `git push` lên `main`, Cloudflare tự build và deploy lại.
 
-> Nếu thêm/sửa biến môi trường sau khi đã deploy, vào **Deployments → Retry deployment** để áp dụng.
+> **Dùng Cloudflare Pages thay vì Worker?** Vẫn được: Create → **Pages** → Connect to Git, *Build output directory* = `public`,
+> thêm 2 biến `GAS_URL`, `GAS_KEY` ở *Settings → Variables and Secrets*. Thư mục `functions/` sẽ xử lý `/api`.
+
+### Lỗi thường gặp khi deploy
+
+| Thông báo | Cách xử lý |
+|---|---|
+| `Missing entry-point to Worker script` | Repo còn bản cũ — cập nhật code mới có `src/worker.js` và `wrangler.toml` mới |
+| Lỗi tên Worker không khớp | Sửa `name` trong `wrangler.toml` trùng tên dự án trên Cloudflare |
+| Đăng nhập báo `chưa cấu hình GAS_URL / GAS_KEY` | Thêm 2 biến ở bước 5 rồi Deploy lại |
+| `Apps Script không trả về JSON` | Kiểm tra `GAS_URL` đúng link `/exec` và Web App để quyền **Bất kỳ ai** |
+| `API key không hợp lệ` | `GAS_KEY` trên Cloudflare phải trùng API key tạo bởi `taoApiKey()` |
 
 ### Đăng nhập
 
@@ -103,7 +118,7 @@ URL `/exec` giữ nguyên nên không cần đổi trên Cloudflare.
 
 ```bash
 cp .dev.vars.example .dev.vars   # điền GAS_URL, GAS_KEY
-npx wrangler pages dev
+npx wrangler dev
 ```
 
 ## Phân quyền

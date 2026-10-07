@@ -1,6 +1,19 @@
-name = "ems"
+# Cloudflare Worker + Static Assets
+# "name" phải TRÙNG tên Worker đã tạo trên Cloudflare Dashboard.
+name = "ems-truong-duoc"
+main = "src/worker.js"
 compatibility_date = "2026-01-01"
-pages_build_output_dir = "public"
+
+# Giữ các biến đặt trên Dashboard khi deploy lại
+keep_vars = true
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/api", "/api/"]
+
+[observability]
+enabled = true
 
 # GAS_URL và GAS_KEY KHÔNG đặt ở đây — khai báo trong Cloudflare Dashboard
-# (Pages → dự án → Settings → Variables and Secrets) hoặc file .dev.vars khi chạy local.
+# (Worker → Settings → Variables and Secrets, chọn loại Secret) hoặc file .dev.vars khi chạy local.
